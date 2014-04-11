@@ -6,7 +6,7 @@ function GM:PlayerInitialSpawn(ply)
 
 	ply:SetMoney(10000)
 
-	ply:SetTeam(2)
+	self:TeamsSetupPlayer(ply)
 
 	if self:GetGameState() != 0 then
 		timer.Simple(0, function ()
@@ -17,16 +17,6 @@ function GM:PlayerInitialSpawn(ply)
 	end
 
 	self.LastPlayerSpawn = CurTime()
-
-	net.Start("spawn_zones")
-	for k, ent in pairs(ents.FindByClass("spawn_zone")) do
-		net.WriteUInt(k, 16)
-		net.WriteVector(ent:OBBMins())
-		net.WriteVector(ent:OBBMaxs())
-		net.WriteFloat(ent.grid.sqsize)
-	end
-	net.WriteUInt(0, 16)
-	net.Send(ply)
 end
 
 function GM:PlayerLoadedLocalPlayer(ply)
@@ -61,7 +51,7 @@ function GM:PlayerSpawn( ply )
 	hook.Call( "PlayerLoadout", GAMEMODE, ply )
 	hook.Call( "PlayerSetModel", GAMEMODE, ply )
 
-	ply:ResetUpgrades()
+	ply:UnDisguise()
 	ply:CalculateSpeed()
 
 	ply:SetHMaxHealth(100)
@@ -69,8 +59,6 @@ function GM:PlayerSpawn( ply )
 
 	ply:SetCustomCollisionCheck(true)
 	GAMEMODE:PlayerSetNewHull(ply)
-	net.Start("hull_set")
-	net.Broadcast()
 
 	self:PlayerSetupHands(ply)
 
@@ -113,15 +101,13 @@ end
 function PlayerMeta:CalculateSpeed()
 	// set the defaults
 	local settings = {
-		walkSpeed = 160,
-		runSpeed = 300,
-		jumpPower = 0,
+		walkSpeed = 250,
+		runSpeed = 350,
+		jumpPower = 200,
 		canRun = false,
 		canMove = true,
-		canJump = false
+		canJump = true
 	}
-
-	settings.walkSpeed = settings.walkSpeed + 15 * (self:GetRunningBoots() - 1)
 
 	hook.Call("PlayerCalculateSpeed", ply, settings)
 
@@ -248,109 +234,63 @@ function PlayerMeta:TakeMoney(amount)
 	return false
 end
 
-function GM:PlayerSelectSpawn( ply )
 
-	local pos, zone, sq = self:ArenaFindPlayerSpawn(ply)
-	if pos then
-		self:ClearBoxesAroundSquare(zone, sq.x, sq.y)
-		ply:SetPos(pos)
-	else
-		self:PlayerSelectSpawnOld(ply)
-	end
-	
-end
+function GM:PlayerSelectSpawn( pl )
 
-function GM:PlayerSelectSpawnOld( pl )
+	local spawnPoints = {}
 
-	if ( GAMEMODE.TeamBased ) then
-	
-		local ent = GAMEMODE:PlayerSelectTeamSpawn( pl:Team(), pl )
-		if ( IsValid(ent) ) then return ent end
-	
-	end
-
-	-- Save information about all of the spawn points
-	-- in a team based game you'd split up the spawns
-	if ( !IsTableOfEntitiesValid( self.SpawnPoints ) ) then
-	
-		self.LastSpawnPoint = 0
-		self.SpawnPoints = ents.FindByClass( "info_player_start" )
-		self.SpawnPoints = table.Add( self.SpawnPoints, ents.FindByClass( "info_player_deathmatch" ) )
-		self.SpawnPoints = table.Add( self.SpawnPoints, ents.FindByClass( "info_player_combine" ) )
-		self.SpawnPoints = table.Add( self.SpawnPoints, ents.FindByClass( "info_player_rebel" ) )
-		
-		-- CS Maps
-		self.SpawnPoints = table.Add( self.SpawnPoints, ents.FindByClass( "info_player_counterterrorist" ) )
-		self.SpawnPoints = table.Add( self.SpawnPoints, ents.FindByClass( "info_player_terrorist" ) )
-		
-		-- DOD Maps
-		self.SpawnPoints = table.Add( self.SpawnPoints, ents.FindByClass( "info_player_axis" ) )
-		self.SpawnPoints = table.Add( self.SpawnPoints, ents.FindByClass( "info_player_allies" ) )
-
+	if pl:Team() == 1 then
 		-- (Old) GMod Maps
-		self.SpawnPoints = table.Add( self.SpawnPoints, ents.FindByClass( "gmod_player_start" ) )
+		spawnPoints = table.Add( spawnPoints, ents.FindByClass( "gmod_player_start" ) )
 		
 		-- TF Maps
-		self.SpawnPoints = table.Add( self.SpawnPoints, ents.FindByClass( "info_player_teamspawn" ) )
+		spawnPoints = table.Add( spawnPoints, ents.FindByClass( "info_player_teamspawn" ) )
 		
 		-- INS Maps
-		self.SpawnPoints = table.Add( self.SpawnPoints, ents.FindByClass( "ins_spawnpoint" ) )  
+		spawnPoints = table.Add( spawnPoints, ents.FindByClass( "ins_spawnpoint" ) )  
 
 		-- AOC Maps
-		self.SpawnPoints = table.Add( self.SpawnPoints, ents.FindByClass( "aoc_spawnpoint" ) )
+		spawnPoints = table.Add( spawnPoints, ents.FindByClass( "aoc_spawnpoint" ) )
 
 		-- Dystopia Maps
-		self.SpawnPoints = table.Add( self.SpawnPoints, ents.FindByClass( "dys_spawn_point" ) )
+		spawnPoints = table.Add( spawnPoints, ents.FindByClass( "dys_spawn_point" ) )
 
-		-- PVKII Maps
-		self.SpawnPoints = table.Add( self.SpawnPoints, ents.FindByClass( "info_player_pirate" ) )
-		self.SpawnPoints = table.Add( self.SpawnPoints, ents.FindByClass( "info_player_viking" ) )
-		self.SpawnPoints = table.Add( self.SpawnPoints, ents.FindByClass( "info_player_knight" ) )
-
-		-- DIPRIP Maps
-		self.SpawnPoints = table.Add( self.SpawnPoints, ents.FindByClass( "diprip_start_team_blue" ) )
-		self.SpawnPoints = table.Add( self.SpawnPoints, ents.FindByClass( "diprip_start_team_red" ) )
- 
-		-- OB Maps
-		self.SpawnPoints = table.Add( self.SpawnPoints, ents.FindByClass( "info_player_red" ) )
-		self.SpawnPoints = table.Add( self.SpawnPoints, ents.FindByClass( "info_player_blue" ) )        
- 
 		-- SYN Maps
-		self.SpawnPoints = table.Add( self.SpawnPoints, ents.FindByClass( "info_player_coop" ) )
- 
-		-- ZPS Maps
-		self.SpawnPoints = table.Add( self.SpawnPoints, ents.FindByClass( "info_player_human" ) )
-		self.SpawnPoints = table.Add( self.SpawnPoints, ents.FindByClass( "info_player_zombie" ) )      
- 
-		-- ZM Maps
-		self.SpawnPoints = table.Add( self.SpawnPoints, ents.FindByClass( "info_player_deathmatch" ) )
-		self.SpawnPoints = table.Add( self.SpawnPoints, ents.FindByClass( "info_player_zombiemaster" ) )  		
+			spawnPoints = table.Add( spawnPoints, ents.FindByClass( "info_player_coop" ) )
 
+		spawnPoints = table.Add( spawnPoints, ents.FindByClass( "info_player_deathmatch" ) )
+	elseif pl:Team() == 3 then // props
+		spawnPoints = table.Add( spawnPoints, ents.FindByClass( "info_player_terrorist" ) )
+		spawnPoints = table.Add( spawnPoints, ents.FindByClass( "info_player_axis" ) )
+		spawnPoints = table.Add( spawnPoints, ents.FindByClass( "info_player_combine" ) )
+		spawnPoints = table.Add( spawnPoints, ents.FindByClass( "info_player_pirate" ) )
+		spawnPoints = table.Add( spawnPoints, ents.FindByClass( "info_player_viking" ) )
+		spawnPoints = table.Add( spawnPoints, ents.FindByClass( "diprip_start_team_blue" ) )
+		spawnPoints = table.Add( spawnPoints, ents.FindByClass( "info_player_blue" ) )        
+		spawnPoints = table.Add( spawnPoints, ents.FindByClass( "info_player_human" ) )
+	elseif pl:Team() == 2 then 
+		spawnPoints = table.Add( spawnPoints, ents.FindByClass( "info_player_counterterrorist" ) )
+		spawnPoints = table.Add( spawnPoints, ents.FindByClass( "info_player_allies" ) )
+		spawnPoints = table.Add( spawnPoints, ents.FindByClass( "info_player_rebel" ) )
+		spawnPoints = table.Add( spawnPoints, ents.FindByClass( "info_player_knight" ) )
+		spawnPoints = table.Add( spawnPoints, ents.FindByClass( "diprip_start_team_red" ) )
+		spawnPoints = table.Add( spawnPoints, ents.FindByClass( "info_player_red" ) )
+		spawnPoints = table.Add( spawnPoints, ents.FindByClass( "info_player_zombie" ) )      
 	end
-	
-	local Count = table.Count( self.SpawnPoints )
+
+	local Count = table.Count( spawnPoints )
 	
 	if ( Count == 0 ) then
 		Msg("[PlayerSelectSpawn] Error! No spawn points!\n")
 		return nil
 	end
 	
-	-- If any of the spawnpoints have a MASTER flag then only use that one.
-	-- This is needed for single player maps.
-	for k, v in pairs( self.SpawnPoints ) do
-		
-		if ( v:HasSpawnFlags( 1 ) ) then
-			return v
-		end
-		
-	end
-	
 	local ChosenSpawnPoint = nil
 	
 	-- Try to work out the best, random spawnpoint
-	for i=0, Count do
+	for i = 0, Count do
 	
-		ChosenSpawnPoint = table.Random( self.SpawnPoints )
+		ChosenSpawnPoint = table.Random( spawnPoints )
 
 		if ( ChosenSpawnPoint &&
 			ChosenSpawnPoint:IsValid() &&
@@ -414,18 +354,17 @@ end
 function GM:PlayerSwitchWeapon(ply, oldwep, newwep)
 end
 
-function GM:KeyPress(ply, key, c, d)
+function GM:KeyPress(ply, key)
 	if ply:Alive() then
 		if key == IN_ATTACK then
-			self:PlayerPlaceBomb(ply)
+			self:PlayerDisguise(ply)
 		elseif key == IN_ATTACK2 then
-			self:PlayerAltFire(ply)
 		end
 	end
 end
 
 function GM:PlayerSwitchFlashlight(ply)
-	return false
+	return true
 end
 
 function GM:PlayerShouldTaunt( ply, actid )
@@ -433,7 +372,7 @@ function GM:PlayerShouldTaunt( ply, actid )
 end
 
 function GM:CanPlayerSuicide(ply)
-	return false
+	return true
 end
 
 function GM:PlayerSay( ply, text, team)
@@ -441,16 +380,16 @@ function GM:PlayerSay( ply, text, team)
 		return
 	end
 
-	local ct = ChatText()
-	if !ply:Alive() then
-		ct:Add("[DEAD] ", Color(200, 20, 20))
-	end
-	local col = ply:GetPlayerColor()
-	ct:Add(ply:Nick(), Color(col.x * 255, col.y * 255, col.z * 255))
-	ct:Add(": " .. text, color_white)
-	ct:SendAll()
-	Msg(ply:Nick() .. ": " .. text .. "\n")
-	return false
+	-- local ct = ChatText()
+	-- if !ply:Alive() then
+	-- 	ct:Add("[DEAD] ", Color(200, 20, 20))
+	-- end
+	-- local col = ply:GetPlayerColor()
+	-- ct:Add(ply:Nick(), Color(col.x * 255, col.y * 255, col.z * 255))
+	-- ct:Add(": " .. text, color_white)
+	-- ct:SendAll()
+	-- Msg(ply:Nick() .. ": " .. text .. "\n")
+	-- return false
 end
 
 function GM:StartCommand(ply, cmd)

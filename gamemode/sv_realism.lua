@@ -23,5 +23,10 @@ end
 
 // minimum velocity to trigger function is 530
 function GM:GetFallDamage( ply, vel )
-	return 0
+	if vel > 530 then
+		local minvel = vel - 530
+		local dmg = math.ceil(minvel / 278 * 115) + 30
+		dmg = self:PerkFallDamage(ply, vel, dmg) or dmg
+		return dmg
+	end
 end

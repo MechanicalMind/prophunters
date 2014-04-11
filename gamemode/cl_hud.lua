@@ -48,7 +48,6 @@ end
 
 function GM:DrawGameHUD()
 	if LocalPlayer():Alive() then
-		self:DrawUpgrades()
 	end
 
 	local ply = LocalPlayer()
@@ -215,58 +214,6 @@ function GM:DrawHealthFace(ply)
 		cam.IgnoreZ( false )
 end
 
-function GM:DrawUpgrade(name, amo, col, x, y)
-	surface.SetFont("RobotoHUD-30")
-	local w, h = surface.GetTextSize(amo)
-	draw.ShadowText(amo, "RobotoHUD-30", x, y, col, 0)
-	draw.ShadowText(name, "RobotoHUD-10", x + w + h * 0.2, y + h * 0.65, col, 0, 1)
-end
-
-GM.UpgradesNotif = {}
-
-function GM:DrawUpgrades()
-	local x = 20 + math.ceil(ScrW() * 0.09) + 20
-	local w,h = math.ceil(ScrW() * 0.09), 80
-	h = w
-	local y = ScrH() - 20 - h
-
-	local f15 = draw.GetFontHeight("RobotoHUD-15")
-	local f25 = draw.GetFontHeight("RobotoHUD-30") * 0.8
-	self:DrawUpgrade("Bombs", self:GetMaxBombs(), Color(50,255,50), x, y)
-	self:DrawUpgrade("Speed", self:GetRunningBoots(), Color(0, 150, 255), x, y + f25 + 4)
-	self:DrawUpgrade("Power", self:GetBombPower(), Color(220,50,50), x, y + f25 * 2 + 4 * 2)
-
-	local f20 = draw.GetFontHeight("RobotoHUD-20")
-	local i = 0
-	for k, pickup in pairs(GAMEMODE.Pickups) do
-		if !pickup.NoList && self:HasUpgrade(k) then
-			local x, y = ScrW() - 4, ScrH() - 4 - f20 * i
-			draw.ShadowText(pickup.name, "RobotoHUD-20", x, y, pickup.color or color_white, 2, 4)
-			i = i + 1
-		end
-	end
-
-	if self.UpgradePopup && self.Pickups[self.UpgradePopup.id] then
-		if self.UpgradePopup.time + 3 < CurTime() then
-			self.UpgradePopup = nil
-		else
-			local pickup = self.Pickups[self.UpgradePopup.id]
-			local y = ScrH() - draw.GetFontHeight("RobotoHUD-20") - draw.GetFontHeight("RobotoHUD-15") * 2
-			draw.ShadowText(pickup.name, "RobotoHUD-20", ScrW() / 2, y, pickup.color or color_white, 1, 1)
-			if pickup.Description then
-				draw.ShadowText(pickup.Description, "RobotoHUD-15", ScrW() / 2, y + draw.GetFontHeight("RobotoHUD-20"), color_white, 1, 1)
-			end
-		end
-	end
-end
-
-net.Receive("melons_pickup_upgrade", function (len)
-	local id = net.ReadUInt(16)
-
-	GAMEMODE.UpgradePopup = {id = id, time = CurTime()}
-end)
-
-
 function GM:DrawMoney()
 
 	local x = 20 + 8
@@ -322,7 +269,7 @@ end
 function GM:DrawRoundTimer()
 
 	if self:GetGameState() == 1 then
-		local time = math.ceil(5 - self:GetStateRunningTime())
+		local time = math.ceil(30 - self:GetStateRunningTime())
 		if time > 0 then
 			draw.ShadowText(time, "RobotoHUD-40", ScrW() / 2, ScrH() / 3, color_white, 1, 1)
 		end
@@ -331,4 +278,19 @@ function GM:DrawRoundTimer()
 			draw.ShadowText("GO!", "RobotoHUD-50", ScrW() / 2, ScrH() / 3, color_white, 1, 1)
 		end
 	end
+end
+
+function GM:RenderScreenspaceEffects()
+	local client = LocalPlayer()
+	if !client:Alive() then
+	end
+
+	if self:GetGameState() == 1 then
+		if client:Team() == 2 then
+			surface.SetDrawColor(25, 25, 25, 255)
+			surface.DrawRect(-1, -1, ScrW() + 2, ScrH() + 2)
+		end
+	end
+
+
 end

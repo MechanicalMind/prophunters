@@ -61,18 +61,20 @@ function GM:SetupRound()
 		return
 	end
 
-	local i = 1
+	self:BalanceTeams()
+
 	for k, ply in pairs(player.GetAll()) do
 		if ply:Team() != 1 then // ignore spectators
 			ply:SetNWBool("RoundInGame", true)
 			ply:KillSilent()
 			ply:Spawn()
 
-			local col = self:AssignColor(i, c)
+			local col = team.GetColor(ply:Team())
 			ply:SetPlayerColor(Vector(col.r / 255, col.g / 255, col.b / 255))
-			i = i + 1
 
-			ply:Freeze(true)
+			if ply:Team() == 2 then
+				ply:Freeze(true)
+			end
 		else
 			ply:SetNWBool("RoundInGame", false)
 		end
@@ -96,39 +98,38 @@ function GM:StartRound()
 
 end
 
-function GM:EndRound(reason, winner)
-	self.RoundWinner = winner
-	
+function GM:EndRound(reason)
+	local winningTeam
 	if reason == 1 then
 		local ct = ChatText()
 		ct:Add("Tie everybody loses")
 		ct:SendAll()
-
-		net.Start("round_victor")
-		net.WriteUInt(reason, 8)
-		net.Broadcast()
-
 	elseif reason == 2 then
-		winner:SetScore(winner:GetScore() + 1)
-
-		net.Start("round_victor")
-		net.WriteUInt(reason, 8)
-		net.WriteEntity(winner)
-		net.WriteString(winner:Nick())
-		net.WriteVector(winner:GetPlayerColor())
-		net.WriteUInt(winner:GetScore(), 16)
-		net.Broadcast()
-
 		local ct = ChatText()
-		local col = winner:GetPlayerColor()
-		col = Color(col.r * 255, col.g * 255, col.b * 255)
-		ct:Add(winner:Nick(), col)
-		ct:Add(" wins")
+		ct:Add(team.GetName(2), team.GetColor(2))
+		ct:Add(" win")
 		ct:SendAll()
+		winningTeam = 2
+	elseif reason == 3 then
+		local ct = ChatText()
+		ct:Add(team.GetName(3), team.GetColor(3))
+		ct:Add(" win")
+		ct:SendAll()
+		winningTeam = 3
 	end
 
+
+	net.Start("round_victor")
+	net.WriteUInt(reason, 8)
+	if winningTeam then
+		net.WriteUInt(winningTeam, 16)
+	end
+	net.Broadcast()
+
 	for k, ply in pairs(self:GetPlayingPlayers()) do
-		
+		if ply:Team() == winningTeam then
+		else
+		end
 	end
 	self:AddRoundStatistic(self:GetStateRunningTime(), #self:GetPlayingPlayers())
 	self:SetGameState(3)
@@ -146,22 +147,27 @@ function GM:RoundsSetupPlayer(ply)
 end
 
 function GM:CheckForVictory()
-	local c = 0
-	local last
+	local red, blue = 0, 0
 	for k, ply in pairs(self:GetPlayingPlayers()) do
 		if ply:Alive() then
-			c = c + 1
-			last = ply
+			if ply:Team() == 2 then
+				red = red + 1
+			elseif ply:Team() == 3 then
+				blue = blue + 1
+			end
 		end
 	end
-
-	if c == 0 then
+	if red == 0 && blue == 0 then
 		self:EndRound(1)
 		return
 	end
 
-	if c == 1 then
-		self:EndRound(2, last)
+	if red == 0 then
+		self:EndRound(3)
+		return
+	end
+	if blue == 0 then
+		self:EndRound(2)
 		return
 	end
 end
@@ -178,13 +184,14 @@ function GM:RoundsThink()
 			self:SetupRound()
 		end
 	elseif self:GetGameState() == 1 then
-		if self:GetStateRunningTime() > 5 then
+		if self:GetStateRunningTime() > 30 then
 			self:StartRound()
 		end
 	elseif self:GetGameState() == 2 then
 		self:CheckForVictory()
 	elseif self:GetGameState() == 3 then
 		if self:GetStateRunningTime() > 10 then
+			self:SwapTeams()
 			self:SetupRound()
 		end
 	end
@@ -193,48 +200,6 @@ end
 function GM:DoRoundDeaths(ply, attacker)
 
 end
-
-local colors = {
-	HSVToColor(0, 0.7, 0.98),
-	HSVToColor(110, 0.79, 0.9),
-	HSVToColor(240, 0.8, 0.93),
-	HSVToColor(60, 0.85, 0.94),
-	HSVToColor(270, 0.81, 0.94),
-	HSVToColor(30, 0.97, 0.93),
-	HSVToColor(340, 0.77, 0.96),
-	HSVToColor(190, 0.99, 0.98),
-	HSVToColor(300, 0.71, 0.95),
-	HSVToColor(80, 0.89, 0.57),
-	HSVToColor(259, 0.87, 0.57),
-	HSVToColor(120, 0.98, 0.39),
-}
-
-function GM:AssignColor(i, count)
-	-- if count <= #colors then
-	-- 	col = table.Copy(colors[i])
-	-- 	return col
-	-- end
-	i = i - 1
-	-- local hue = i / count * 360 + math.Rand(0, i / count / 2)
-	local v = (i % 3) / 3
-	local hue = (i * 360 / 1.61803) % 360
-	local col = HSVToColor(hue, math.Rand(0.7, 1), 0.7 + v * 0.3)
-	return col
-end
-
-function GM:TestColors(count)
-	count = count or 1
-	local ct = ChatText()
-	for i = 1, count do
-		local col = self:AssignColor(i, count)
-		ct:Add("player " .. i .. ", ", col)
-		local h, s, v = ColorToHSV(col)
-		-- print("player " .. i, "HSVToColor(" .. h .. ", " .. math.Round(s * 100) / 100 .. ", " .. math.Round(v * 100) / 100 .. ")")
-		-- print("Color(" .. col.r .. ", " .. col.g .. ", " .. col.b .. ")")
-	end
-	ct:SendAll()
-end
-
 
 function PlayerMeta:SetScore(score)
 	self:SetNWInt("MelonScore", score)

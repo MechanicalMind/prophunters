@@ -45,11 +45,8 @@ end)
 net.Receive("round_victor", function (len)
 	local tab = {}
 	tab.reason = net.ReadUInt(8)
-	if tab.reason == 2 then
-		tab.winner = net.ReadEntity()
-		tab.winnerName = net.ReadString()
-		tab.winnerColor = net.ReadVector()
-		tab.winnerScore = net.ReadUInt(16)
+	if tab.reason == 2 || tab.reason == 3 then
+		tab.winningTeam = net.ReadUInt(16)
 	end
 
 	timer.Simple(2, function ()
