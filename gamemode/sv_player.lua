@@ -57,7 +57,7 @@ function GM:PlayerSpawn( ply )
 	ply:SetHMaxHealth(100)
 	ply:SetHealth(ply:GetHMaxHealth())
 
-	ply:SetCustomCollisionCheck(true)
+	-- ply:SetCustomCollisionCheck(true)
 	GAMEMODE:PlayerSetNewHull(ply)
 
 	self:PlayerSetupHands(ply)
@@ -141,8 +141,6 @@ function GM:DoPlayerDeath(ply, attacker, dmginfo)
 		ply:CSpectate(OBS_MODE_CHASE, ent)
 	end
 
-	self:ScatterPowerups(ply)
-
 	ply:AddDeaths(1)
 
 	if attacker:IsValid() && attacker:IsPlayer() then
@@ -155,6 +153,11 @@ function GM:DoPlayerDeath(ply, attacker, dmginfo)
 end
 
 function GM:PlayerLoadout(ply)
+	if ply:Team() == 2 then
+		ply:Give("weapon_crowbar")
+		ply:Give("weapon_smg1")
+		ply:Give("weapon_shotgun")
+	end
 end
 
 
@@ -377,7 +380,7 @@ end
 
 function GM:PlayerSay( ply, text, team)
 	if !IsValid(ply) then
-		return
+		return true
 	end
 
 	-- local ct = ChatText()
@@ -390,6 +393,7 @@ function GM:PlayerSay( ply, text, team)
 	-- ct:SendAll()
 	-- Msg(ply:Nick() .. ": " .. text .. "\n")
 	-- return false
+	return true
 end
 
 function GM:StartCommand(ply, cmd)

@@ -23,7 +23,7 @@ function GM:ShouldCollide(ent1, ent2)
 end
 
 function GM:PlayerSetNewHull(ply, s, z, duckz)
-	s = s or 32
+	s = s or 16
 	z = z or 72
 	duckz = duckz or z / 2
 	ply:SetHull(Vector(-s, -s, 0), Vector(s, s, z))

@@ -3,12 +3,14 @@ local EntityMeta = FindMetaTable("Entity")
 
 function GM:PlayerDisguise(ply)
 
-	local tr = ply:GetEyeTraceNoCursor()
-	if IsValid(tr.Entity) then
-		if tr.HitPos:Distance(tr.StartPos) < 75 then
-			ply:DisguiseAsProp(tr.Entity)
-		else
-			-- ply:ChatPrint("too far " .. math.floor(tr.HitPos:Distance(tr.StartPos)))
+	if ply:Team() == 3 then
+		local tr = ply:GetEyeTraceNoCursor()
+		if IsValid(tr.Entity) then
+			if tr.HitPos:Distance(tr.StartPos) < 75 then
+				ply:DisguiseAsProp(tr.Entity)
+			else
+				-- ply:ChatPrint("too far " .. math.floor(tr.HitPos:Distance(tr.StartPos)))
+			end
 		end
 	end
 end
@@ -16,7 +18,7 @@ end
 function PlayerMeta:CanDisguiseAsProp(ent)
 	local hullxy = math.Round(math.Max(ent:OBBMaxs().x, ent:OBBMaxs().y, -ent:OBBMins().x, -ent:OBBMins().y))
 	local hullz = math.Round(ent:OBBMaxs().z - ent:OBBMins().z)
-	
+
 	local trace = {}
 	trace.start = self:GetPos()
 	trace.endpos = self:GetPos()
@@ -38,7 +40,7 @@ function PlayerMeta:DisguiseAsProp(ent)
 	if !can then
 		if why == 1 then
 			local ct = ChatText()
-			ct:Add("Not enough room to disguise as that, move further away", Color(255, 50, 50))
+			ct:Add("Not enough room to disguise as that, move into a more open area", Color(255, 50, 50))
 			ct:Send(self)
 		end
 		return
@@ -48,7 +50,10 @@ function PlayerMeta:DisguiseAsProp(ent)
 	self:SetNWString("disguiseModel", ent:GetModel())
 	self:SetNWVector("disguiseMins", ent:OBBMins())
 	self:SetNWVector("disguiseMaxs", ent:OBBMaxs())
-	self:SetNoDraw(true)
+	self:SetColor(Color(255, 0, 0, 0))
+	self:SetRenderMode(RENDERMODE_TRANSALPHA)
+	self:SetModel(ent:GetModel())
+	self:SetNoDraw(false)
 	GAMEMODE:PlayerSetNewHull(self, hullxy, hullz, hullz)
 end
 
@@ -58,5 +63,7 @@ end
 
 function PlayerMeta:UnDisguise()
 	self:SetNWBool("disguised", false)
+	self:SetColor(Color(255, 255, 255, 255))
 	self:SetNoDraw(false)
+	self:SetRenderMode( RENDERMODE_NORMAL)
 end

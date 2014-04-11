@@ -131,16 +131,17 @@ function GM:CreateHealthFace(ply)
 end
 
 function GM:DrawHealthFace(ply)
+	local client = LocalPlayer()
 
 	local x = 20
 	local w,h = math.ceil(ScrW() * 0.09), 80
 	h = w
 	local y = ScrH() - 20 - h
 
-	local ps = 0.0
+	local ps = 0.05
 
-	surface.SetDrawColor(150, 150, 150, 151)
-	drawPoly(x + w * ps, y + h * ps, w * (1 - 2 * ps), h * (1 - 2 * ps), 1)
+	surface.SetDrawColor(50, 50, 50, 180)
+	drawPoly(x, y, w, h, 1)
 
 	render.ClearStencil()
 	render.SetStencilEnable( true )
@@ -166,41 +167,48 @@ function GM:DrawHealthFace(ply)
 	render.SetStencilPassOperation( STENCILOPERATION_REPLACE )
 	render.SetStencilReferenceValue( 1 )
 
-	if !IsValid(self.HealthFace) then
-		self:CreateHealthFace(ply)
-	end
+	-- if !IsValid(self.HealthFace) then
+	-- 	self:CreateHealthFace(ply)
+	-- end
 
-	if IsValid(self.HealthFace) then
-		if self.HealthFace:GetModel() != ply:GetModel() then
-			self:CreateHealthFace(ply)
-		end	
+	-- if IsValid(self.HealthFace) then
+	-- 	if self.HealthFace:GetModel() != ply:GetModel() then
+	-- 		self:CreateHealthFace(ply)
+	-- 	end	
 
-		self.HealthFace.PlayerColor = ply:GetPlayerColor()
+	-- 	self.HealthFace.PlayerColor = ply:GetPlayerColor()
 
-		local bone = self.HealthFace:LookupBone("ValveBiped.Bip01_Head1")
-		local pos = Vector(0, 0, 70)
-		local bang = Angle()
-		if bone then
-			pos, bang = self.HealthFace:GetBonePosition(bone)
-		end
+	-- 	local bone = self.HealthFace:LookupBone("ValveBiped.Bip01_Head1")
+	-- 	local pos = Vector(0, 0, 0)
+	-- 	local bang = Angle()
+	-- 	if bone then
+	-- 		pos, bang = self.HealthFace:GetBonePosition(bone)
+	-- 	end
 
-		cam.Start3D( pos + Vector(19, 0, 2), Vector(-1,0,0):Angle(), 70, x, y, w, h, 5, 4096 )
-		cam.IgnoreZ( true )
+	-- 	cam.Start3D( pos + Vector(19, 0, 2), Vector(-1,0,0):Angle(), 70, x, y, w, h, 5, 4096 )
+	-- 	cam.IgnoreZ( true )
 		
-		render.OverrideDepthEnable( false )
-		render.SuppressEngineLighting( true )
-		render.SetLightingOrigin(pos)
-		render.ResetModelLighting(1, 1, 1)
-		render.SetColorModulation(1, 1, 1)
-		render.SetBlend(1)
+	-- 	render.OverrideDepthEnable( false )
+	-- 	render.SuppressEngineLighting( true )
+	-- 	render.SetLightingOrigin(pos)
+	-- 	render.ResetModelLighting(1, 1, 1)
+	-- 	render.SetColorModulation(1, 1, 1)
+	-- 	render.SetBlend(1)
 		
-		self.HealthFace:DrawModel()
+	-- 	self.HealthFace:DrawModel()
 		
-		render.SuppressEngineLighting( false )
-		cam.IgnoreZ( false )
-		cam.End3D()
+	-- 	render.SuppressEngineLighting( false )
+	-- 	cam.IgnoreZ( false )
+	-- 	cam.End3D()
 
-	end
+	-- end
+
+	local health = client:Health()
+	local maxhealth = client:GetHMaxHealth()
+
+	local nh = math.Round(h * math.Clamp(health / maxhealth, 0, 1))
+	surface.SetDrawColor(0, 150, 220, 150)
+	surface.DrawRect(x, y + h - nh, w, nh)
 
 	render.SetStencilEnable( false )
  
