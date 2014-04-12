@@ -84,6 +84,16 @@ end
 
 function GM:EntityTakeDamage( ent, dmginfo )
 	ent.LastDamageInfo = dmginfo
+	if IsValid(ent) then
+		if ent:IsDisguisableAs() then
+			local att = dmginfo:GetAttacker()
+			if IsValid(att) && att:IsPlayer() then
+				local tdmg = DamageInfo()
+				tdmg:SetDamage(math.min(dmginfo:GetDamage(), 3))
+				att:TakeDamageInfo(tdmg)
+			end
+		end
+	end
 end
 
 function file.ReadDataAndContent(path)

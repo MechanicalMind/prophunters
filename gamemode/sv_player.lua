@@ -109,6 +109,12 @@ function PlayerMeta:CalculateSpeed()
 		canJump = true
 	}
 
+	// speed penalty for small objects (popcan, small bottles, mouse, etc)
+	if self:IsDisguised() then
+		local mul = math.Clamp(self:GetNWFloat("disguiseVolume", 1) / 200, 0.5, 1)
+		settings.walkSpeed = settings.walkSpeed * mul
+	end
+
 	hook.Call("PlayerCalculateSpeed", ply, settings)
 
 
@@ -131,7 +137,9 @@ function PlayerMeta:CalculateSpeed()
 end
 
 function GM:DoPlayerDeath(ply, attacker, dmginfo)
-
+	if ply:IsDisguised() && ply:Team() == 3 then
+		ply:EmitSound("ambient/voices/f_scream1.wav")
+	end
 	ply:UnDisguise()
 
 	ply:Freeze(false) // why?, *sigh*
@@ -159,6 +167,9 @@ function GM:PlayerLoadout(ply)
 		ply:Give("weapon_crowbar")
 		ply:Give("weapon_smg1")
 		ply:Give("weapon_shotgun")
+
+		ply:GiveAmmo(45 * 4, "SMG1")
+		ply:GiveAmmo(6 * 4, "buckshot")
 	end
 end
 

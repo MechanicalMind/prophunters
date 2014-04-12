@@ -173,11 +173,14 @@ function GM:DrawHealth(ply)
 	render.SetStencilReferenceValue( 1 )
 
 	local health = client:Health()
-	local maxhealth = client:GetHMaxHealth()
+	local maxhealth = math.max(health, client:GetHMaxHealth())
 
-	local nh = math.Round(h * math.Clamp(health / maxhealth, 0, 1))
+	local nh = math.Round((h - ps * 2) * math.Clamp(health / maxhealth, 0, 1))
 	surface.SetDrawColor(0, 150, 220, 150)
-	surface.DrawRect(x, y + h - nh, w, nh)
+	surface.DrawRect(x, y + h - ps - nh, w, nh)
+
+	draw.ShadowText(math.Round(health) .. "", "RobotoHUD-25", x + w / 2, y + h / 2, color_white, 1, 1)
+
 
 	render.SetStencilEnable( false )
  
@@ -189,6 +192,12 @@ function GM:DrawHealth(ply)
 		render.SetBlend( 1 )
 		
 		cam.IgnoreZ( false )
+
+	if ply:IsDisguised() && ply:DisguiseRotationLocked() then
+		local fg = draw.GetFontHeight("RobotoHUD-15")
+		draw.ShadowText("ROTATION", "RobotoHUD-15", x + w + 20, y + h / 2 - fg / 2, color_white, 0, 1)
+		draw.ShadowText("LOCK", "RobotoHUD-15", x + w + 20, y + h / 2 + fg / 2, color_white, 0, 1)
+	end
 end
 
 function GM:DrawMoney()
@@ -239,7 +248,7 @@ end
 
 function GM:HUDShouldDraw(name)
 	if name == "CHudHealth" then return false end
-	if name == "CHudAmmo" then return false end
+	-- if name == "CHudAmmo" then return false end
 	return true
 end
 

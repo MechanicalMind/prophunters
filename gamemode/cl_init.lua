@@ -87,7 +87,11 @@ function GM:CalcView(ply, pos, angles, fov)
 			local maxs = ply:GetNWVector("disguiseMaxs")
 			local mins = ply:GetNWVector("disguiseMins")
 			local view = {}
-			view.origin = pos + angles:Forward() * -(maxs.z - mins.z)
+			-- view.origin = pos + angles:Forward() * -(maxs.z - mins.z)
+			-- local trace = {}
+			-- trace.start = ply:GetPos()
+			-- trace.endpos = ply:GetPropEyePos()
+			view.origin = ply:GetPropEyePos() + angles:Forward() * -(maxs.z - mins.z)
 			view.angles = angles
 			view.fov = fov
 			return view
@@ -106,10 +110,11 @@ end
 net.Receive("hull_set", function (len)
 	local ply = net.ReadEntity()
 	if !IsValid(ply) then return end
-	local s = net.ReadFloat()
-	local z = net.ReadFloat()
+	local hullx = net.ReadFloat()
+	local hully = net.ReadFloat()
+	local hullz = net.ReadFloat()
 	local duckz = net.ReadFloat()
-	GAMEMODE:PlayerSetNewHull(ply, s, z, duckz)
+	GAMEMODE:PlayerSetHull(ply, hullx, hully, hullz, duckz)
 end)
 
 
@@ -125,3 +130,10 @@ function GM:EntityRemoved(ent)
 		ent.PropMod:Remove()
 	end
 end
+
+concommand.Add("+menu_context", function ()
+	RunConsoleCommand("ph_lockrotation")
+end)
+
+concommand.Add("-menu_context", function ()
+end)

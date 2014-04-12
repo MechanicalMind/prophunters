@@ -25,6 +25,9 @@ local function renderDis(self)
 					local maxs = ply:GetNWVector("disguiseMaxs")
 					local ang = ply:EyeAngles()
 					ang.p = 0
+					if ply:DisguiseRotationLocked() then
+						ang.y = ply:GetNWFloat("disguiseRotationLockYaw")
+					end
 					local pos = ply:GetPos() + Vector(0, 0, -mins.z)
 					local center = (maxs + mins) / 2
 					center.z = 0
@@ -55,13 +58,13 @@ end
 function GM:RenderDisguiseHalo()
 	local client = LocalPlayer()
 	if client:Team() == 3 then
-		local tr = client:GetEyeTraceNoCursor()
+		local tr = client:GetPropEyeTrace()
 		if IsValid(tr.Entity) then
 			if tr.HitPos:Distance(tr.StartPos) < 100 then
 				if client:CanDisguiseAsProp(tr.Entity) then
 					local col = Color(50, 220, 50)
 					local hullxy, hullz = tr.Entity:GetPropSize()
-					if !client:CanFitHull(hullxy, hullz) then
+					if !client:CanFitHull(hullxy, hullxy, hullz) then
 						col = Color(220, 50, 50)
 					end
 					halo.Add({tr.Entity}, col, 2, 2, 2, true, true)
