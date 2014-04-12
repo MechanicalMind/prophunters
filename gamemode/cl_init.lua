@@ -43,10 +43,6 @@ function GM:PostDrawViewModel( vm, ply, weapon )
 end
 
 function GM:RenderScene( origin, angles, fov )
-end
-
-
-function GM:PostDrawTranslucentRenderables()
 	local client = LocalPlayer()
 	if IsValid(client) then
 		local wep = client:GetActiveWeapon()
@@ -57,6 +53,17 @@ function GM:PostDrawTranslucentRenderables()
 			end
 		end
 	end
+end
+
+
+function GM:PostDrawTranslucentRenderables()
+
+end
+function GM:DrawMonitors()
+end
+
+function GM:PreDrawTranslucentRenderables()
+
 end
 
 function GM:PreDrawHalos()
@@ -113,6 +120,8 @@ function GM:PostDrawEffects()
 	self:RenderDisguises()
 end
 
-function GM:EntityRemoved()
-
+function GM:EntityRemoved(ent)
+	if IsValid(ent.PropMod) then
+		ent.PropMod:Remove()
+	end
 end

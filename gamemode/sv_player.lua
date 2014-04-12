@@ -132,6 +132,8 @@ end
 
 function GM:DoPlayerDeath(ply, attacker, dmginfo)
 
+	ply:UnDisguise()
+
 	ply:Freeze(false) // why?, *sigh*
 	
 	ply:CreateRagdoll()

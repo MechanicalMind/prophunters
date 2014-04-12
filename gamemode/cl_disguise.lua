@@ -1,3 +1,5 @@
+include("sh_disguise.lua")
+
 local PlayerMeta = FindMetaTable("Player")
 
 function PlayerMeta:IsDisguised()
@@ -10,19 +12,32 @@ local function renderDis(self)
 			local model = ply:GetNWString("disguiseModel")
 			if model && model != "" then
 				if !IsValid(ply.PropMod) || ply.PropMod:GetModel() != model then
+					if IsValid(ply.PropMod) then
+						ply.PropMod:Remove()
+					end
 					ply.PropMod = ClientsideModel(model)
-					ply.PropMod:SetNoDraw(true)
+					-- ply.PropMod:SetNoDraw(true)
 					ply.PropMod:DrawShadow(true)
 				end
 
 				if IsValid(ply.PropMod) then
 					local mins = ply:GetNWVector("disguiseMins")
-					ply.PropMod:SetPos(ply:GetPos() + Vector(0, 0, -mins.z))
+					local maxs = ply:GetNWVector("disguiseMaxs")
 					local ang = ply:EyeAngles()
 					ang.p = 0
+					local pos = ply:GetPos() + Vector(0, 0, -mins.z)
+					local center = (maxs + mins) / 2
+					center.z = 0
+					center:Rotate(ang)
+					DebugInfo(ply:EntIndex() , tostring(center))
+					ply.PropMod:SetPos(pos - center)
 					ply.PropMod:SetAngles(ang)
-					ply.PropMod:DrawModel()
+					-- ply.PropMod:DrawModel()
 				end
+			end
+		else
+			if IsValid(ply.PropMod) then
+				ply.PropMod:Remove()
 			end
 		end
 	end
@@ -38,36 +53,31 @@ function GM:RenderDisguises()
 	end
 end
 
-function PlayerMeta:CanDisguiseAsProp(ent)
-	local hullxy = math.Round(math.Max(ent:OBBMaxs().x, ent:OBBMaxs().y, -ent:OBBMins().x, -ent:OBBMins().y))
-	local hullz = math.Round(ent:OBBMaxs().z - ent:OBBMins().z)
-	
-	local trace = {}
-	trace.start = self:GetPos()
-	trace.endpos = self:GetPos()
-	trace.filter = self
-	trace.maxs = Vector(hullxy, hullxy, hullz)
-	trace.mins = Vector(-hullxy, -hullxy, 0)
-	local tr = util.TraceHull(trace)
-	if tr.Hit then 
-		return false, 1
-	end
-	return true, 0
-end
-
-
 function GM:RenderDisguiseHalo()
 	local client = LocalPlayer()
 	if client:Team() == 3 then
 		local tr = client:GetEyeTraceNoCursor()
 		if IsValid(tr.Entity) then
 			if tr.HitPos:Distance(tr.StartPos) < 75 then
-				local col = Color(50, 150, 220)
-				if !client:CanDisguiseAsProp(tr.Entity) then
-					col = Color(150, 50, 50)
+				if client:CanDisguiseAsProp(tr.Entity) then
+					local col = Color(50, 150, 220)
+					local hullxy, hullz = tr.Entity:GetPropSize()
+					if !client:CanFitHull(hullxy, hullz) then
+						col = Color(150, 50, 50)
+					end
+					halo.Add({tr.Entity}, col, 2, 2, 5, true, false)
 				end
-				halo.Add({tr.Entity}, col, 2, 2, 5, true, false)
 			end
 		end
+		local tab = {}
+		for k, ply in pairs(player.GetAll()) do
+			if ply != client && ply:Team() == 3 && ply:IsDisguised() then
+				if IsValid(ply.PropMod) then
+					table.insert(tab, ply.PropMod)
+				end
+			end
+		end
+		halo.Add(tab, team.GetColor(3), 2, 2, 5, true, false)
 	end
+
 end

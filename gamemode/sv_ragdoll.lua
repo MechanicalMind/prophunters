@@ -82,6 +82,9 @@ function PlayerMeta:CreateRagdoll(attacker, dmginfo)
 	end
 
 	local Data = duplicator.CopyEntTable( self )
+	if !util.IsValidRagdoll(Data.Model) then
+		return
+	end
 
 	local ent = ents.Create( "prop_ragdoll" )
 		duplicator.DoGeneric( ent, Data )

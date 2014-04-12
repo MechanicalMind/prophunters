@@ -288,7 +288,10 @@ function GM:DrawRoundTimer()
 	end
 end
 
+local polyMat = Material("VGUI/white.vmt")
 function GM:RenderScreenspaceEffects()
+end
+function GM:PreDrawHUD()
 	local client = LocalPlayer()
 	if !client:Alive() then
 	end
@@ -299,6 +302,4 @@ function GM:RenderScreenspaceEffects()
 			surface.DrawRect(-1, -1, ScrW() + 2, ScrH() + 2)
 		end
 	end
-
-
 end
