@@ -27,18 +27,18 @@ net.Receive("gamestate", function (len)
 		GAMEMODE.UpgradesNotif = {}
 		GAMEMODE.KillFeed = {}
 
-		// siren sound
-		if IsValid(LocalPlayer()) then
-			GAMEMODE.StartSiren = CreateSound(LocalPlayer(), "ambient/alarms/siren.wav")
-			GAMEMODE.StartSiren:Play()
-			GAMEMODE.StartSiren:ChangeVolume(0.5, 0)
-		end
+		-- // siren sound
+		-- if IsValid(LocalPlayer()) then
+		-- 	GAMEMODE.StartSiren = CreateSound(LocalPlayer(), "ambient/alarms/siren.wav")
+		-- 	GAMEMODE.StartSiren:Play()
+		-- 	GAMEMODE.StartSiren:ChangeVolume(0.5, 0)
+		-- end
 	elseif GAMEMODE.GameState == 2 then
 
 		// end siren on start round
-		if GAMEMODE.StartSiren then
-			GAMEMODE.StartSiren:FadeOut(0.3)
-		end
+		-- if GAMEMODE.StartSiren then
+		-- 	GAMEMODE.StartSiren:FadeOut(0.3)
+		-- end
 	end
 end)
 

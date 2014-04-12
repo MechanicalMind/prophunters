@@ -29,7 +29,6 @@ local function renderDis(self)
 					local center = (maxs + mins) / 2
 					center.z = 0
 					center:Rotate(ang)
-					DebugInfo(ply:EntIndex() , tostring(center))
 					ply.PropMod:SetPos(pos - center)
 					ply.PropMod:SetAngles(ang)
 					-- ply.PropMod:DrawModel()
@@ -58,14 +57,14 @@ function GM:RenderDisguiseHalo()
 	if client:Team() == 3 then
 		local tr = client:GetEyeTraceNoCursor()
 		if IsValid(tr.Entity) then
-			if tr.HitPos:Distance(tr.StartPos) < 75 then
+			if tr.HitPos:Distance(tr.StartPos) < 100 then
 				if client:CanDisguiseAsProp(tr.Entity) then
-					local col = Color(50, 150, 220)
+					local col = Color(50, 220, 50)
 					local hullxy, hullz = tr.Entity:GetPropSize()
 					if !client:CanFitHull(hullxy, hullz) then
-						col = Color(150, 50, 50)
+						col = Color(220, 50, 50)
 					end
-					halo.Add({tr.Entity}, col, 2, 2, 5, true, false)
+					halo.Add({tr.Entity}, col, 2, 2, 2, true, true)
 				end
 			end
 		end
@@ -77,7 +76,7 @@ function GM:RenderDisguiseHalo()
 				end
 			end
 		end
-		halo.Add(tab, team.GetColor(3), 2, 2, 5, true, false)
+		halo.Add(tab, team.GetColor(3), 2, 2, 2, true, false)
 	end
 
 end

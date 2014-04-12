@@ -8,7 +8,7 @@ function GM:PlayerDisguise(ply)
 	if ply:Team() == 3 then
 		local tr = ply:GetEyeTraceNoCursor()
 		if IsValid(tr.Entity) then
-			if tr.HitPos:Distance(tr.StartPos) < 75 then
+			if tr.HitPos:Distance(tr.StartPos) < 100 then
 				if ply:CanDisguiseAsProp(tr.Entity) then
 					ply:DisguiseAsProp(tr.Entity)
 				end
@@ -42,6 +42,7 @@ function PlayerMeta:DisguiseAsProp(ent)
 	self:SetNoDraw(false)
 	self:DrawShadow(false)
 	GAMEMODE:PlayerSetNewHull(self, hullxy, hullz, hullz)
+	self:EmitSound("weapons/bugbait/bugbait_squeeze" .. math.random(1, 3) .. ".wav")
 end
 
 function PlayerMeta:IsDisguised()

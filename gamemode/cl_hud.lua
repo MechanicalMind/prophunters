@@ -61,6 +61,28 @@ function GM:DrawGameHUD()
 		col = Color(col.r * 255, col.y * 255, col.z * 255)
 		draw.ShadowText(ply:Nick(), "RobotoHUD-30", ScrW() / 2, ScrH() - 4, col, 1, 4)
 	end
+
+
+	local tr = ply:GetEyeTraceNoCursor()
+
+	local shouldDraw = hook.Run("HUDShouldDraw", "PropHuntersPlayerNames")
+	if shouldDraw != false then
+		// draw names
+		if IsValid(tr.Entity) && tr.Entity:IsPlayer() && tr.HitPos:Distance(tr.StartPos) < 500 then
+			// hunters can only see their teams names
+			if ply:Team() != 2 || ply:Team() == tr.Entity:Team() then
+				self.LastLooked = tr.Entity
+				self.LookedFade = CurTime()
+			end
+		end
+		if IsValid(self.LastLooked) && self.LookedFade + 2 > CurTime() then
+			local name = self.LastLooked:Nick() or "error"
+			local col = self.LastLooked:GetPlayerColor() or Vector()
+			col = Color(col.x * 255, col.y * 255, col.z * 255)
+			col.a = (1 - (CurTime() - self.LookedFade) / 2) * 255
+			draw.ShadowText(name, "RobotoHUD-20", ScrW() / 2, ScrH() / 2 + 80, col, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, Color(0, 0, 0, col.a))
+		end
+	end
 end
 
 
@@ -114,23 +136,6 @@ end
 
 function GM:DrawHealth(ply)
 
-	self:DrawHealthFace(ply)
-end
-
-function GM:CreateHealthFace(ply)
-	self.HealthFace = ClientsideModel(ply:GetModel(), RENDER_GROUP_OPAQUE_ENTITY)
-	self.HealthFace:SetNoDraw( true )
-		local iSeq = self.HealthFace:LookupSequence( "walk_all" );
-	if ( iSeq <= 0 ) then iSeq = self.HealthFace:LookupSequence( "WalkUnarmed_all" ) end
-	if ( iSeq <= 0 ) then iSeq = self.HealthFace:LookupSequence( "walk_all_moderate" ) end
-	
-	-- if ( iSeq > 0 ) then self.HealthFace:ResetSequence( iSeq ) end
-
-	local f = function (self) return self.PlayerColor or Vector(1, 0, 0) end
-	self.HealthFace.GetPlayerColorOverride = f
-end
-
-function GM:DrawHealthFace(ply)
 	local client = LocalPlayer()
 
 	local x = 20
@@ -166,42 +171,6 @@ function GM:DrawHealthFace(ply)
 	render.SetStencilCompareFunction( STENCILCOMPARISONFUNCTION_EQUAL )
 	render.SetStencilPassOperation( STENCILOPERATION_REPLACE )
 	render.SetStencilReferenceValue( 1 )
-
-	-- if !IsValid(self.HealthFace) then
-	-- 	self:CreateHealthFace(ply)
-	-- end
-
-	-- if IsValid(self.HealthFace) then
-	-- 	if self.HealthFace:GetModel() != ply:GetModel() then
-	-- 		self:CreateHealthFace(ply)
-	-- 	end	
-
-	-- 	self.HealthFace.PlayerColor = ply:GetPlayerColor()
-
-	-- 	local bone = self.HealthFace:LookupBone("ValveBiped.Bip01_Head1")
-	-- 	local pos = Vector(0, 0, 0)
-	-- 	local bang = Angle()
-	-- 	if bone then
-	-- 		pos, bang = self.HealthFace:GetBonePosition(bone)
-	-- 	end
-
-	-- 	cam.Start3D( pos + Vector(19, 0, 2), Vector(-1,0,0):Angle(), 70, x, y, w, h, 5, 4096 )
-	-- 	cam.IgnoreZ( true )
-		
-	-- 	render.OverrideDepthEnable( false )
-	-- 	render.SuppressEngineLighting( true )
-	-- 	render.SetLightingOrigin(pos)
-	-- 	render.ResetModelLighting(1, 1, 1)
-	-- 	render.SetColorModulation(1, 1, 1)
-	-- 	render.SetBlend(1)
-		
-	-- 	self.HealthFace:DrawModel()
-		
-	-- 	render.SuppressEngineLighting( false )
-	-- 	cam.IgnoreZ( false )
-	-- 	cam.End3D()
-
-	-- end
 
 	local health = client:Health()
 	local maxhealth = client:GetHMaxHealth()
