@@ -87,11 +87,18 @@ function GM:CalcView(ply, pos, angles, fov)
 			local maxs = ply:GetNWVector("disguiseMaxs")
 			local mins = ply:GetNWVector("disguiseMins")
 			local view = {}
-			-- view.origin = pos + angles:Forward() * -(maxs.z - mins.z)
-			-- local trace = {}
-			-- trace.start = ply:GetPos()
-			-- trace.endpos = ply:GetPropEyePos()
-			view.origin = ply:GetPropEyePos() + angles:Forward() * -(maxs.z - mins.z)
+
+			local reach = (maxs.z - mins.z)
+			local trace = {}
+			trace.start = ply:GetPropEyePos()
+			trace.endpos = trace.start + angles:Forward() * -(reach + 5)
+			local tab = ents.FindByClass("prop_ragdoll")
+			table.insert(tab, ply)
+			trace.filter = tab
+
+			local tr = util.TraceLine(trace)
+			view.origin = trace.start + (trace.endpos - trace.start):GetNormal() * math.Clamp(trace.start:Distance(tr.HitPos) - 5, 0, reach)
+
 			view.angles = angles
 			view.fov = fov
 			return view
@@ -119,10 +126,10 @@ end)
 
 
 function GM:RenderScene()
+	self:RenderDisguises()
 end
 
 function GM:PostDrawEffects()
-	self:RenderDisguises()
 end
 
 function GM:EntityRemoved(ent)

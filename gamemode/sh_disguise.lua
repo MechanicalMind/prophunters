@@ -50,19 +50,17 @@ function PlayerMeta:GetPropEyePos()
 	local angles = self:EyeAngles()
 	local maxs = self:GetNWVector("disguiseMaxs")
 	local mins = self:GetNWVector("disguiseMins")
+
+	local reach = (maxs.z - mins.z) + 10
 	local trace = {}
-	trace.start = self:GetPos() + Vector(0, 0, 2) // for some reason the player sinks slightly into the ground when he lands
-	trace.endpos = self:GetPos() + Vector(0, 0, maxs.z - mins.z + 10)
+	trace.start = self:GetPos() + Vector(0, 0, 1.5)
+	trace.endpos = trace.start + Vector(0, 0, reach + 5)
 	local tab = ents.FindByClass("prop_ragdoll")
-	table.insert(tab, ply)
+	table.insert(tab, self)
 	trace.filter = tab
-	trace.mask = MASK_SOLID_BRUSHONLY
+
 	local tr = util.TraceLine(trace)
-	if tr.Hit then
-		return tr.HitPos + (trace.start - trace.endpos):GetNormal() * 5
-	else
-		return trace.endpos
-	end
+	return trace.start + (trace.endpos - trace.start):GetNormal() * math.Clamp(trace.start:Distance(tr.HitPos) - 5, 0, reach)
 end
 
 function PlayerMeta:GetPropEyeTrace()

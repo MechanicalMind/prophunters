@@ -10,6 +10,9 @@ function GM:PlayerDisguise(ply)
 		if IsValid(tr.Entity) then
 			if tr.HitPos:Distance(tr.StartPos) < 100 then
 				if ply:CanDisguiseAsProp(tr.Entity) then
+					if ply.LastDisguise && ply.LastDisguise + 1 > CurTime() then
+						return
+					end
 					ply:DisguiseAsProp(tr.Entity)
 				end
 			else
@@ -32,6 +35,8 @@ function PlayerMeta:DisguiseAsProp(ent)
 	if !self:IsDisguised() then
 		self.OldPlayerModel = self:GetModel()
 	end
+	self:Flashlight(false)
+	
 	self:SetNWBool("disguised", true)
 	self:SetNWString("disguiseModel", ent:GetModel())
 	self:SetNWVector("disguiseMins", ent:OBBMins())
@@ -60,7 +65,13 @@ function PlayerMeta:DisguiseAsProp(ent)
 
 	self:CalculateSpeed()
 
+
+	local offset = Vector(0, 0, ent:OBBMaxs().z - self:OBBMins().z)
+	self:SetViewOffset(offset)
+	self:SetViewOffsetDucked(offset)
+
 	self:EmitSound("weapons/bugbait/bugbait_squeeze" .. math.random(1, 3) .. ".wav")
+	self.LastDisguise = CurTime()
 end
 
 function PlayerMeta:IsDisguised()
@@ -78,6 +89,8 @@ function PlayerMeta:UnDisguise()
 	if self.OldPlayerModel then
 		self:SetModel(self.OldPlayerModel)
 	end
+	self:SetViewOffset(Vector(0, 0, 64))
+	self:SetViewOffsetDucked(Vector(0, 0, 28))
 end
 
 function PlayerMeta:DisguiseLockRotation()
@@ -103,7 +116,7 @@ end
 function PlayerMeta:DisguiseUnlockRotation()
 	local maxs = self:GetNWVector("disguiseMaxs")
 	local mins = self:GetNWVector("disguiseMins")
-	local hullxy = math.Round(math.Max(self:OBBMaxs().x - self:OBBMins().x, self:OBBMaxs().y - self:OBBMins().y) / 2)
+	local hullxy = math.Round(math.Max(maxs.x - mins.x, maxs.y - mins.y) / 2)
 	local hullz = math.Round(maxs.z - mins.z)
 	if !self:CanFitHull(hullxy, hullxy, hullz) then
 		local ct = ChatText()

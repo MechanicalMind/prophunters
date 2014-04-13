@@ -380,6 +380,9 @@ function GM:KeyPress(ply, key)
 end
 
 function GM:PlayerSwitchFlashlight(ply)
+	if ply:IsDisguised() then
+		return false
+	end
 	return true
 end
 
