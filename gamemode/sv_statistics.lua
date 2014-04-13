@@ -1,6 +1,9 @@
 
+local gamemodeName = (GM or GAMEMODE).Folder:sub(11)
+local roundTable = "round_" .. gamemodeName
+
 function GM:SetupStatisticsTables()
-	local res = sql.Query([[CREATE TABLE IF NOT EXISTS mu_round(id INTEGER PRIMARY KEY, timePlayed UNSIGNED INT, numPlayers UNSIGNED INT)]])
+	local res = sql.Query([[CREATE TABLE IF NOT EXISTS ]] .. roundTable .. [[(id INTEGER PRIMARY KEY, timePlayed UNSIGNED INT, numPlayers UNSIGNED INT)]])
 	if res then
 		print(res)
 		if type(res) == "table" then
@@ -12,7 +15,7 @@ function GM:SetupStatisticsTables()
 end
 
 function GM:RefreshStatisticsTables()
-	local res = sql.Query([[DROP TABLE mu_round]])
+	local res = sql.Query([[DROP TABLE ]] .. roundTable)
 	if res then
 		print(res)
 		if type(res) == "table" then
@@ -25,7 +28,7 @@ function GM:RefreshStatisticsTables()
 end
 
 function GM:AddRoundStatistic(secondsPlayed, numPlayers)
-	local code = [[INSERT INTO mu_round(timePlayed, numPlayers) VALUES(%1, %2)]]
+	local code = [[INSERT INTO ]] .. roundTable .. [[(timePlayed, numPlayers) VALUES(%1, %2)]]
 	code = code:gsub("%%1", sql.SQLStr(tonumber(secondsPlayed) or 0, true), 1)
 	code = code:gsub("%%2", sql.SQLStr(tonumber(numPlayers) or 0, true), 1)
 	local res = sql.Query(code)
@@ -129,7 +132,7 @@ concommand.Add("mb_stats_round", function (ply, com, args)
 	local size = tonumber(args[2] or 100) or 100
 	local page = tonumber(args[1] or 0) or 0
 
-	local code = [[SELECT * FROM mu_round LIMIT %1, %2]]
+	local code = [[SELECT * FROM ]] .. roundTable .. [[ LIMIT %1, %2]]
 	code = code:gsub("%%1", sql.SQLStr(page * size, true), 1)
 	code = code:gsub("%%2", sql.SQLStr(size, true), 1)
 	local res = sql.Query(code)

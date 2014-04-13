@@ -2,12 +2,11 @@ local PlayerMeta = FindMetaTable("Player")
 
 util.AddNetworkString("gamestate")
 util.AddNetworkString("round_victor")
+util.AddNetworkString("gamerules")
 
 GM.GameState = GAMEMODE and GAMEMODE.GameState or 0
 GM.StateStart = GAMEMODE and GAMEMODE.StateStart or CurTime()
 GM.Rounds = GAMEMODE and GAMEMODE.Rounds or 0
-
-team.SetUp(1, "Spectators", Color(150, 150, 150))
 
 // STATES
 // 0 WAITING FOR PLAYERS
@@ -40,10 +39,33 @@ end
 function GM:SetGameState(state)
 	self.GameState = state
 	self.StateStart = CurTime()
+	self:NetworkGameState()
+end
+
+function GM:NetworkGameState(ply)
 	net.Start("gamestate")
-	net.WriteUInt(self.GameState, 32)
-	net.WriteDouble(self.StateStart)
+	net.WriteUInt(self.GameState or 0, 32)
+	net.WriteDouble(self.StateStart or 0)
 	net.Broadcast()
+end
+
+function GM:NetworkGameSettings(ply)
+	net.Start("gamerules")
+
+	if self.RoundSettings then
+		for k, v in pairs(self.RoundSettings) do
+			net.WriteUInt(1, 8)
+			net.WriteString(k)
+			net.WriteType(v)
+		end
+	end
+	net.WriteUInt(0, 8)
+
+	if ply == nil then
+		net.Broadcast()
+	else
+		net.Send(ply)
+	end
 end
 
 function GM:SetupRound()
@@ -140,10 +162,7 @@ function GM:RoundsSetupPlayer(ply)
 	ply:SetNWBool("RoundInGame", false)
 
 	// send game state
-	net.Start("gamestate")
-	net.WriteUInt(self.GameState, 32)
-	net.WriteDouble(self.StateStart)
-	net.Send(ply)
+	self:NetworkGameState(ply)
 end
 
 function GM:CheckForVictory()

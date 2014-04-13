@@ -66,7 +66,7 @@ function PlayerMeta:DisguiseAsProp(ent)
 	self:CalculateSpeed()
 
 
-	local offset = Vector(0, 0, ent:OBBMaxs().z - self:OBBMins().z)
+	local offset = Vector(0, 0, ent:OBBMaxs().z - self:OBBMins().z + 10)
 	self:SetViewOffset(offset)
 	self:SetViewOffsetDucked(offset)
 

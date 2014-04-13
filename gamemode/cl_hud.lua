@@ -263,6 +263,12 @@ function GM:DrawRoundTimer()
 		if self:GetStateRunningTime() < 2 then
 			draw.ShadowText("GO!", "RobotoHUD-50", ScrW() / 2, ScrH() / 3, color_white, 1, 1)
 		end
+		local time = self:GetStateRunningTime()
+		local m = math.floor(time / 60)
+		local s = math.floor(time % 60)
+		m = tostring(m)
+		s = s < 10 and "0" .. s or tostring(s)
+		draw.ShadowText(m .. ":" .. s, "RobotoHUD-20", ScrW() / 2, ScrH() * 0.6, color_white, 1, 1)
 	end
 end
 

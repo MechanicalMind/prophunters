@@ -36,9 +36,6 @@ util.AddNetworkString("mb_openhelpmenu")
 
 resource.AddFile("resource/fonts/Roboto-Black.ttf")
 
-GM.MapScale = CreateConVar("mb_map_scale", 20, bit.bor(FCVAR_NOTIFY), "Size of map squared per player (default 20)" )
-GM.MapMaxArea = CreateConVar("mb_map_maxarea", 500, bit.bor(FCVAR_NOTIFY), "Max area of map squared" )
-GM.DeathBlocksTime = CreateConVar("mb_deathblocks_time", 2 * 60, bit.bor(FCVAR_NOTIFY), "Amount of time before death blocks start decreasing the map size" )
 
 function GM:Initialize() 
 	self.DeathRagdolls = {}
