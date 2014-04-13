@@ -2,7 +2,7 @@
 {
 	"base"		"base"
 	"title"		"Codename Bluesubmarine"
-	"maps"		"^mb_"
+	"maps"		"^ph_"
 	"menusystem"	"1"
 	"version" 	"0.0.1"
 }

@@ -47,9 +47,22 @@ function PlayerMeta:GetPropEyePos()
 	if !self:IsDisguised() then
 		return self:GetShootPos()
 	end
+	local angles = self:EyeAngles()
 	local maxs = self:GetNWVector("disguiseMaxs")
 	local mins = self:GetNWVector("disguiseMins")
-	return self:GetPos() + Vector(0, 0, maxs.z - mins.z + 10)
+	local trace = {}
+	trace.start = self:GetPos() + Vector(0, 0, 2) // for some reason the player sinks slightly into the ground when he lands
+	trace.endpos = self:GetPos() + Vector(0, 0, maxs.z - mins.z + 10)
+	local tab = ents.FindByClass("prop_ragdoll")
+	table.insert(tab, ply)
+	trace.filter = tab
+	trace.mask = MASK_SOLID_BRUSHONLY
+	local tr = util.TraceLine(trace)
+	if tr.Hit then
+		return tr.HitPos + (trace.start - trace.endpos):GetNormal() * 5
+	else
+		return trace.endpos
+	end
 end
 
 function PlayerMeta:GetPropEyeTrace()
