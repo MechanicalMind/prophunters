@@ -82,6 +82,16 @@ end
 function GM:EntityTakeDamage( ent, dmginfo )
 	ent.LastDamageInfo = dmginfo
 	if IsValid(ent) then
+		if ent:IsPlayer() then
+			if IsValid(dmginfo:GetAttacker()) then
+				local attacker = dmginfo:GetAttacker()
+				if attacker:IsPlayer() then
+					if attacker:Team() == ent:Team() then
+						return true
+					end
+				end
+			end
+		end
 		if ent:IsDisguisableAs() then
 			local att = dmginfo:GetAttacker()
 			if IsValid(att) && att:IsPlayer() then

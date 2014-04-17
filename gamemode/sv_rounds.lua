@@ -166,6 +166,11 @@ function GM:RoundsSetupPlayer(ply)
 end
 
 function GM:CheckForVictory()
+	if self:GetStateRunningTime() > 5 * 60 then
+		self:EndRound(3)
+		return
+	end
+
 	local red, blue = 0, 0
 	for k, ply in pairs(self:GetPlayingPlayers()) do
 		if ply:Alive() then

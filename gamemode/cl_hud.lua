@@ -172,8 +172,8 @@ function GM:DrawHealth(ply)
 	render.SetStencilPassOperation( STENCILOPERATION_REPLACE )
 	render.SetStencilReferenceValue( 1 )
 
-	local health = client:Health()
-	local maxhealth = math.max(health, client:GetHMaxHealth())
+	local health = ply:Health()
+	local maxhealth = math.max(health, ply:GetHMaxHealth())
 
 	local nh = math.Round((h - ps * 2) * math.Clamp(health / maxhealth, 0, 1))
 	surface.SetDrawColor(0, 150, 220, 150)
@@ -263,12 +263,12 @@ function GM:DrawRoundTimer()
 		if self:GetStateRunningTime() < 2 then
 			draw.ShadowText("GO!", "RobotoHUD-50", ScrW() / 2, ScrH() / 3, color_white, 1, 1)
 		end
-		local time = self:GetStateRunningTime()
+		local time = math.max(0, 5 * 60 - self:GetStateRunningTime())
 		local m = math.floor(time / 60)
 		local s = math.floor(time % 60)
 		m = tostring(m)
 		s = s < 10 and "0" .. s or tostring(s)
-		draw.ShadowText(m .. ":" .. s, "RobotoHUD-20", ScrW() / 2, ScrH() * 0.6, color_white, 1, 1)
+		draw.ShadowText(m .. ":" .. s, "RobotoHUD-20", ScrW() / 2, 20, color_white, 1, 3)
 	end
 end
 

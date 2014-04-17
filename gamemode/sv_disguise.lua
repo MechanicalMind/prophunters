@@ -72,6 +72,12 @@ function PlayerMeta:DisguiseAsProp(ent)
 
 	self:EmitSound("weapons/bugbait/bugbait_squeeze" .. math.random(1, 3) .. ".wav")
 	self.LastDisguise = CurTime()
+
+	local eff = EffectData()
+	eff:SetOrigin(self:GetPos() + Vector(0, 0, 1))
+	eff:SetScale(hullxy)
+	eff:SetMagnitude(hullz)
+	util.Effect("ph_disguise", eff, true, true)
 end
 
 function PlayerMeta:IsDisguised()

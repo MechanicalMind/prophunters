@@ -102,9 +102,9 @@ function PlayerMeta:CalculateSpeed()
 	// set the defaults
 	local settings = {
 		walkSpeed = 250,
-		runSpeed = 350,
+		runSpeed = 50,
 		jumpPower = 200,
-		canRun = false,
+		canRun = true,
 		canMove = true,
 		canJump = true
 	}
@@ -113,6 +113,9 @@ function PlayerMeta:CalculateSpeed()
 	if self:IsDisguised() then
 		local mul = math.Clamp(self:GetNWFloat("disguiseVolume", 1) / 200, 0.5, 1)
 		settings.walkSpeed = settings.walkSpeed * mul
+		if settings.runSpeed > settings.walkSpeed then
+			settings.runSpeed = settings.walkSpeed
+		end
 	end
 
 	hook.Call("PlayerCalculateSpeed", ply, settings)
