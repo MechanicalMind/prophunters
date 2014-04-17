@@ -34,6 +34,7 @@ local function renderDis(self)
 					center:Rotate(ang)
 					ply.PropMod:SetPos(pos - center)
 					ply.PropMod:SetAngles(ang)
+					ply.PropMod:SetSkin(ply:GetNWInt("disguiseSkin", 1))
 					-- ply.PropMod:DrawModel()
 				end
 			end

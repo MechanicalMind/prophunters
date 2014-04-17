@@ -283,7 +283,7 @@ function GM:PreDrawHUD()
 	if self:GetGameState() == 1 then
 		if client:Team() == 2 then
 			surface.SetDrawColor(25, 25, 25, 255)
-			surface.DrawRect(-1, -1, ScrW() + 2, ScrH() + 2)
+			surface.DrawRect(-10, -10, ScrW() + 20, ScrH() + 20)
 		end
 	end
 end

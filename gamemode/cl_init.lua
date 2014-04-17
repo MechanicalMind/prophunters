@@ -14,6 +14,7 @@ include("cl_killfeed.lua")
 include("cl_voicepanels.lua")
 include("cl_helpscreen.lua")
 include("cl_disguise.lua")
+include("cl_taunt.lua")
 
 function GM:Initialize() 
 end
