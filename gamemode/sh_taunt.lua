@@ -20,14 +20,12 @@ local function addTaunt(name, snd, sex, cats)
 
 	local dur, count = 0, 0
 	for k, v in pairs(snd) do
-		AllowedTauntSounds[v] = true
+		AllowedTauntSounds[v] = t
 		dur = dur + SoundDuration(v)
 		count = count + 1
 	end
 
 	t.soundDuration = dur / count
-	local z = tonumber(util.CRC(name):sub(1, 8))
-	t.color = Color(z % 255 * 0.8, math.floor(z / 255) % 255 * 0.8, math.floor(z / 255 / 255) % 255 * 0.8)
 
 	table.insert(Taunts, t)
 	for k, cat in pairs(cats) do

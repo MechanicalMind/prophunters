@@ -3,6 +3,11 @@ addTaunt("About Time", {
 	"vo/npc/male01/abouttime02.wav"
 }, "male", {"talk"})
 
+addTaunt("About Time", {
+	"vo/npc/female01/abouttime01.wav", 
+	"vo/npc/female01/abouttime02.wav"
+}, "female", {"talk"})
+
 
 addTaunt("Zombie Speak", {
 	"npc/zombie/zombie_voice_idle1.wav",

@@ -34,6 +34,7 @@ include("sv_taunt.lua")
 
 util.AddNetworkString("clientIPE")
 util.AddNetworkString("mb_openhelpmenu")
+util.AddNetworkString("player_model_sex")
 
 resource.AddFile("resource/fonts/Roboto-Black.ttf")
 
@@ -122,5 +123,10 @@ end
 
 function GM:ShowHelp(ply)
 	net.Start("mb_openhelpmenu")
+	net.Send(ply)
+end
+
+function GM:ShowSpare2(ply)
+	net.Start("open_taunt_menu")
 	net.Send(ply)
 end

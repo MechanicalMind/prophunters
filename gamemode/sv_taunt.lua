@@ -1,5 +1,7 @@
 include("sh_taunt.lua")
 
+util.AddNetworkString("open_taunt_menu")
+
 concommand.Add("ph_taunt", function (ply, com, args)
 	if !IsValid(ply) then
 		return
@@ -14,6 +16,11 @@ concommand.Add("ph_taunt", function (ply, com, args)
 
 	local snd = args[1] or ""
 	if !AllowedTauntSounds[snd] then
+		return
+	end
+
+	local t = AllowedTauntSounds[snd]
+	if t.sex && t.sex != ply.ModelSex then
 		return
 	end
 

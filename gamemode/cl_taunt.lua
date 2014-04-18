@@ -6,30 +6,38 @@ local menu
 local gradU = surface.GetTextureID("gui/gradient_up")
 local gradD = surface.GetTextureID("gui/gradient_down")
 
+local function colMul(color, mul)
+	color.r = math.Clamp(math.Round(color.r * mul), 0, 255)
+	color.g = math.Clamp(math.Round(color.g * mul), 0, 255)
+	color.b = math.Clamp(math.Round(color.b * mul), 0, 255)
+end
+
 local function fillList(mlist, taunts)
+	menu.CurrentTaunts = taunts
 	mlist:Clear()
 	for k, t in pairs(taunts) do
+		if t.sex && t.sex != GAMEMODE.PlayerModelSex then
+			continue
+		end
 		local but = vgui.Create("DButton")
 		but:SetTall(draw.GetFontHeight("RobotoHUD-15") * 1.4)
 		but:SetText("")
 		function but:Paint(w, h)
-			surface.SetDrawColor(t.color)
-			surface.DrawRect(0, 0, w, h)
-		
+			local col = Color(150, 150, 150)
 			if self:IsDown() then
-				surface.SetDrawColor(60, 60, 60, 50)
-				surface.DrawRect(0, 0, w, h)
+				colMul(col, 0.5)
 			elseif self:IsHovered() then
-				surface.SetDrawColor(230, 230, 230, 50)
-				surface.DrawRect(0, 0, w, h)
-			else
+				colMul(col, 1.2)
 			end
+			draw.RoundedBox(4, 0, 0, w, h, col)
+		
 
-			draw.ShadowText(t.name, "RobotoHUD-15", w / 2, h / 2, color_white, 1, 1)
+			draw.ShadowText(t.name, "RobotoHUD-15", 4, h / 2, Color(230, 230, 230), 0, 1)
 			draw.ShadowText(math.Round(t.soundDuration * 10) / 10 .. "s", "RobotoHUD-10", w - 4, h / 2, color_white, 2, 1)
 		end
 		function but:DoClick()
 			RunConsoleCommand("ph_taunt", t.sound[math.random(#t.sound)])
+			menu:Close()
 		end
 		mlist:AddItem(but)
 	end
@@ -37,26 +45,22 @@ end
 
 local function addCat(clist, name, taunts, mlist)
 	local z = tonumber(util.CRC(name):sub(1, 8))
-	local color = Color(z % 255, math.floor(z / 255) % 255, math.floor(z / 255 / 255) % 255)
-	color = Color(150, 150, 150)
 
 	local but = vgui.Create("DButton")
-	but:SetTall(draw.GetFontHeight("RobotoHUD-15") * 1.4)
+	but:SetTall(draw.GetFontHeight("RobotoHUD-10") * 1.6)
 	but:SetText("")
 	function but:Paint(w, h)
-		surface.SetDrawColor(color)
-		surface.DrawRect(0, 0, w, h)
-	
+		local col = Color(150, 150, 150)
 		if self:IsDown() then
-			surface.SetDrawColor(60, 60, 60, 50)
-			surface.DrawRect(0, 0, w, h)
+			colMul(col, 0.5)
 		elseif self:IsHovered() then
-			surface.SetDrawColor(230, 230, 230, 50)
-			surface.DrawRect(0, 0, w, h)
-		else
+			colMul(col, 1.2)
 		end
+		surface.SetDrawColor(col)
+		surface.DrawRect(0, 0, w, h)
 
-		draw.ShadowText(name, "RobotoHUD-15", w / 2, h / 2, color_white, 1, 1)
+
+		draw.SimpleText(name, "RobotoHUD-10", w / 2, h / 2, Color(50, 50, 50), 1, 1)
 	end
 	function but:DoClick()
 		fillList(mlist, taunts)
@@ -64,18 +68,20 @@ local function addCat(clist, name, taunts, mlist)
 	clist:AddItem(but)
 end
 
-concommand.Add("ph_menu_taunt", function ()
+local function openTauntMenu()
 	if IsValid(menu) then
-		menu:Remove()
+		fillList(menu.TauntList, menu.CurrentTaunts)
+		menu:SetVisible(!menu:IsVisible())
+		return
 	end
 
 	menu = vgui.Create("DFrame")
-	menu:SetSize(ScrW() * 0.5, ScrH() * 0.8)
+	menu:SetSize(ScrW() * 0.4, ScrH() * 0.8)
 	menu:Center()
 	menu:SetTitle("")
 	menu:MakePopup()
 	menu:SetKeyboardInputEnabled(false)
-	menu:SetDeleteOnClose(true)
+	menu:SetDeleteOnClose(false)
 	menu:SetDraggable(false)
 	menu:ShowCloseButton(true)
 
@@ -88,28 +94,32 @@ concommand.Add("ph_menu_taunt", function ()
 
 	local clist = vgui.Create("DScrollPanel", menu)
 	clist:Dock(LEFT)
-	clist:SetWide(menu:GetWide() * 0.4)
+	clist:SetWide(menu:GetWide() * 0.3)
 	clist:DockMargin(0, 0, 4, 0)
+	local df = draw.GetFontHeight("RobotoHUD-15") * 1.6
 	function clist:Paint(w, h)
-		surface.SetDrawColor(50, 50, 50)
-		surface.DrawRect(0, 0, w, h)
+		surface.SetDrawColor(60, 60, 60)
+		surface.DrawRect(0, 0, w, df)
+
+		draw.SimpleText("Categories", "RobotoHUD-15", w / 2, df / 2, color_white, 1, 1)
 	end
 
 	// child positioning
 	local canvas = clist:GetCanvas()
-	canvas:DockPadding(0, 0, 0, 0)
+	canvas:DockPadding(3, df, 3, 3)
 	function canvas:OnChildAdded( child )
 		child:Dock( TOP )
-		child:DockMargin( 0,0,0,4 )
+		child:DockMargin(0, 0, 0, 1)
 	end
 
 
 
 	local mlist = vgui.Create("DScrollPanel", menu)
+	menu.TauntList = mlist
 	mlist:Dock(FILL)
 	function mlist:Paint(w, h)
 		surface.SetDrawColor(50, 50, 50)
-		surface.DrawRect(0, 0, w, h)
+		-- surface.DrawRect(0, 0, w, h)
 	end
 
 	// child positioning
@@ -126,4 +136,7 @@ concommand.Add("ph_menu_taunt", function ()
 	end
 
 	fillList(mlist, Taunts)
-end)
+end
+
+concommand.Add("ph_menu_taunt", openTauntMenu)
+net.Receive("open_taunt_menu", openTauntMenu)

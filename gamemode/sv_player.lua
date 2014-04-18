@@ -205,6 +205,7 @@ addModel("refugee02", "male")
 addModel("refugee03", "male")
 addModel("refugee04", "male")
 
+
 function GM:PlayerSetModel( ply )
 
 	local cl_playermodel = ply:GetInfo( "cl_playermodel" )
@@ -216,7 +217,11 @@ function GM:PlayerSetModel( ply )
 	util.PrecacheModel( modelname )
 	ply:SetModel( modelname )
 	ply.ModelSex = playerModel.sex
+	print(modelname, ply.ModelSex)
 
+	net.Start("player_model_sex")
+	net.WriteString(playerModel.sex)
+	net.Send(ply)
 end
 
 function GM:ScalePlayerDamage( ply, hitgroup, dmginfo )

@@ -145,3 +145,11 @@ end)
 
 concommand.Add("-menu_context", function ()
 end)
+
+net.Receive("player_model_sex", function ()
+	local sex = net.ReadString()
+	if #sex == 0 then
+		sex = nil
+	end
+	GAMEMODE.PlayerModelSex = sex
+end)
