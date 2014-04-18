@@ -217,7 +217,6 @@ function GM:PlayerSetModel( ply )
 	util.PrecacheModel( modelname )
 	ply:SetModel( modelname )
 	ply.ModelSex = playerModel.sex
-	print(modelname, ply.ModelSex)
 
 	net.Start("player_model_sex")
 	net.WriteString(playerModel.sex)

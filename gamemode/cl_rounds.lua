@@ -57,3 +57,17 @@ end)
 function PlayerMeta:GetScore()
 	return self:GetNWInt("MelonScore") or 0
 end
+
+net.Receive("gamerules", function ()
+
+	local settings = {}
+	while net.ReadUInt(8) != 0 do
+		local k = net.ReadString()
+		local t = net.ReadUInt(8)
+		local v = net.ReadType(t)
+		print(k, v, t)
+	end
+
+
+	GAMEMODE.RoundSettings = settings
+end)

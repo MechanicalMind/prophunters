@@ -8,6 +8,53 @@ addTaunt("About Time", {
 	"vo/npc/female01/abouttime02.wav"
 }, "female", {"talk"})
 
+addTaunt("Get the hell out", {
+	"vo/npc/female01/gethellout.wav"
+}, "female", {"talk"})
+
+addTaunt("Get the hell out", {
+	"vo/npc/male01/gethellout.wav"
+}, "male", {"talk"})
+
+addTaunt("Hi", {
+	"vo/npc/male01/hi01.wav",
+	"vo/npc/male01/hi02.wav"
+}, "male", {"talk"})
+
+addTaunt("Hi", {
+	"vo/npc/female01/hi01.wav",
+	"vo/npc/female01/hi02.wav"
+}, "female", {"talk"})
+
+addTaunt("Over there", {
+	"vo/npc/female01/overthere01.wav",
+	"vo/npc/female01/overthere02.wav"
+}, "female", {"talk"})
+
+addTaunt("Over there", {
+	"vo/npc/male01/overthere01.wav",
+	"vo/npc/male01/overthere02.wav"
+}, "male", {"talk"})
+
+
+addTaunt("Ready when you are", {
+	"vo/npc/female01/readywhenyouare01.wav",
+	"vo/npc/female01/readywhenyouare02.wav"
+}, "female", {"talk"})
+
+addTaunt("Ready when you are", {
+	"vo/npc/male01/readywhenyouare01.wav",
+	"vo/npc/male01/readywhenyouare02.wav"
+}, "male", {"talk"})
+
+addTaunt("Watch out", {
+	"vo/npc/male01/watchout.wav"
+}, "male", {"talk"})
+
+addTaunt("Watch out", {
+	"vo/npc/female01/watchout.wav"
+}, "female", {"talk"})
+
 
 addTaunt("Zombie Speak", {
 	"npc/zombie/zombie_voice_idle1.wav",

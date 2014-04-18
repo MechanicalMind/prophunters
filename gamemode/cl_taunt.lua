@@ -69,6 +69,12 @@ local function addCat(clist, name, taunts, mlist)
 end
 
 local function openTauntMenu()
+	if LocalPlayer():Team() != 3 then
+		if IsValid(menu) then
+			menu:SetVisible(false)
+		end
+		return
+	end
 	if IsValid(menu) then
 		fillList(menu.TauntList, menu.CurrentTaunts)
 		menu:SetVisible(!menu:IsVisible())
@@ -84,12 +90,19 @@ local function openTauntMenu()
 	menu:SetDeleteOnClose(false)
 	menu:SetDraggable(false)
 	menu:ShowCloseButton(true)
+	menu:DockPadding(8, 8 + draw.GetFontHeight("RobotoHUD-25"), 8, 8)
 
 	function menu:Paint(w, h)
 		surface.SetDrawColor(120, 120, 120)
 		surface.DrawRect(0, 0, w, h)
 
-		draw.ShadowText("Taunts", "RobotoHUD-15", 8, 4, color_white, 0)
+		-- draw.ShadowText("Taunts", "RobotoHUD-15", 8, 4, color_white, 0)
+		surface.SetFont("RobotoHUD-25")
+		local t = "Taunts"
+		local tw,th = surface.GetTextSize(t)
+		draw.ShadowText(t, "RobotoHUD-25", 8, 2, Color(49, 142, 219), 0)
+
+		draw.ShadowText("make annoying fart sounds", "RobotoHUD-15", 8 + tw + 16, 2 + th * 0.90, Color(220, 220, 220), 0, 4)
 	end
 
 	local clist = vgui.Create("DScrollPanel", menu)

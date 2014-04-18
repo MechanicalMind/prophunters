@@ -95,6 +95,7 @@ function PlayerMeta:UnDisguise()
 	GAMEMODE:PlayerSetNewHull(self)
 	if self.OldPlayerModel then
 		self:SetModel(self.OldPlayerModel)
+		self.OldPlayerModel = nil
 	end
 	self:SetViewOffset(Vector(0, 0, 64))
 	self:SetViewOffsetDucked(Vector(0, 0, 28))

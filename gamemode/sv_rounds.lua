@@ -114,6 +114,19 @@ function GM:StartRound()
 		ply:Freeze(false)
 	end
 
+	local c = 0
+	for k, ent in pairs(ents.GetAll()) do
+		if ent:IsDisguisableAs() then
+			c = c + 1
+		end
+	end
+	print("Disguise ents", c)
+
+	self.RoundSettings = {}
+	self.RoundSettings.RoundTime = math.Round(c * 0.8 + 30)
+
+	self:NetworkGameSettings()
+
 	local ct = ChatText()
 	ct:Add("Round has started")
 	ct:SendAll()
