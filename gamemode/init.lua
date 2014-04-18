@@ -29,6 +29,7 @@ include("sv_statistics.lua")
 include("sv_bot.lua")
 include("sv_disguise.lua")
 include("sv_teams.lua")
+include("sv_taunt.lua")
 
 
 util.AddNetworkString("clientIPE")
