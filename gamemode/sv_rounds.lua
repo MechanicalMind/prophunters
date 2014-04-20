@@ -132,7 +132,7 @@ function GM:StartRound()
 	end
 
 	self.RoundSettings = {}
-	self.RoundSettings.RoundTime = math.Round(c * 0.8 / hunters * props + 30)
+	self.RoundSettings.RoundTime = math.Round(c * 0.8 * math.sqrt(props / hunters) + 30)
 
 	self:NetworkGameSettings()
 	self:SetGameState(2)
