@@ -49,6 +49,11 @@ function GM:NetworkGameState(ply)
 	net.Broadcast()
 end
 
+function GM:GetRoundSettings()
+	self.RoundSettings = self.RoundSettings or {}
+	return self.RoundSettings 
+end
+
 function GM:NetworkGameSettings(ply)
 	net.Start("gamerules")
 
@@ -108,10 +113,15 @@ function GM:SetupRound()
 end
 
 function GM:StartRound()
-	self:SetGameState(2)
 
+	local hunters, props = 0, 0
 	for k, ply in pairs(self:GetPlayingPlayers()) do
 		ply:Freeze(false)
+		if ply:Team() == 2 then
+			hunters = hunters + 1
+		elseif ply:Team() == 3 then
+			props = props + 1
+		end
 	end
 
 	local c = 0
@@ -120,12 +130,12 @@ function GM:StartRound()
 			c = c + 1
 		end
 	end
-	print("Disguise ents", c)
 
 	self.RoundSettings = {}
-	self.RoundSettings.RoundTime = math.Round(c * 0.8 + 30)
+	self.RoundSettings.RoundTime = math.Round(c * 0.8 / hunters * props + 30)
 
 	self:NetworkGameSettings()
+	self:SetGameState(2)
 
 	local ct = ChatText()
 	ct:Add("Round has started")
@@ -179,7 +189,9 @@ function GM:RoundsSetupPlayer(ply)
 end
 
 function GM:CheckForVictory()
-	if self:GetStateRunningTime() > 5 * 60 then
+	local settings = self:GetRoundSettings()
+	local roundTime = settings.RoundTime or 5 * 60
+	if self:GetStateRunningTime() > roundTime then
 		self:EndRound(3)
 		return
 	end

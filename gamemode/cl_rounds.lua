@@ -65,9 +65,13 @@ net.Receive("gamerules", function ()
 		local k = net.ReadString()
 		local t = net.ReadUInt(8)
 		local v = net.ReadType(t)
-		print(k, v, t)
+		settings[k] = v
 	end
-
 
 	GAMEMODE.RoundSettings = settings
 end)
+
+function GM:GetRoundSettings()
+	self.RoundSettings = self.RoundSettings or {}
+	return self.RoundSettings 
+end
