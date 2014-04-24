@@ -126,7 +126,7 @@ function GM:ShowHelp(ply)
 	net.Send(ply)
 end
 
-function GM:ShowSpare2(ply)
+function GM:ShowSpare1(ply)
 	net.Start("open_taunt_menu")
 	net.Send(ply)
 end

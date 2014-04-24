@@ -25,3 +25,31 @@ net.Receive("msg_clients", function (len)
 		MsgC(line.color, line.text)
 	end
 end)
+
+if !CachedAddChatText then
+	CachedAddChatText = chat.AddText
+end
+
+function chat.AddText(...)
+	hook.Run("ChatAddText", ...)
+	CachedAddChatText(...)
+end
+
+function GM:ChatText(i, name, text, t)
+	self:EndRoundAddChatText(Color(0, 220, 120), text)
+end
+
+function GM:ChatAddText(...)
+	local args = {...}
+	for k, v in pairs(args) do
+		if type(v) == "Player" then
+			table.remove(args, k)
+			if IsValid(v) then
+				table.insert(args, k, Color(0, 220, 120))
+				table.insert(args, k, v:Nick())
+				table.insert(args, k, team.GetColor(v:Team()))
+			end
+		end
+	end
+	self:EndRoundAddChatText(unpack(args))
+end

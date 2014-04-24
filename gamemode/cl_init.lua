@@ -15,6 +15,8 @@ include("cl_voicepanels.lua")
 include("cl_helpscreen.lua")
 include("cl_disguise.lua")
 include("cl_taunt.lua")
+include("cl_endroundboard.lua")
+include("cl_wraptext.lua")
 
 function GM:Initialize() 
 end
