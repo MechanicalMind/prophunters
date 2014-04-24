@@ -36,7 +36,7 @@ function chat.AddText(...)
 end
 
 function GM:ChatText(i, name, text, t)
-	self:EndRoundAddChatText(Color(0, 220, 120), text)
+	self:EndRoundAddChatText(Color(0, 120, 220), text)
 end
 
 function GM:ChatAddText(...)
@@ -45,7 +45,7 @@ function GM:ChatAddText(...)
 		if type(v) == "Player" then
 			table.remove(args, k)
 			if IsValid(v) then
-				table.insert(args, k, Color(0, 220, 120))
+				table.insert(args, k, Color(0, 120, 220))
 				table.insert(args, k, v:Nick())
 				table.insert(args, k, team.GetColor(v:Team()))
 			end

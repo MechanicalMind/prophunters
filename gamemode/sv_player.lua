@@ -116,6 +116,7 @@ function PlayerMeta:CalculateSpeed()
 		if settings.runSpeed > settings.walkSpeed then
 			settings.runSpeed = settings.walkSpeed
 		end
+		settings.jumpPower = settings.jumpPower * 1.2
 	end
 
 	hook.Call("PlayerCalculateSpeed", ply, settings)

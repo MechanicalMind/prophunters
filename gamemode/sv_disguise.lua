@@ -99,6 +99,8 @@ function PlayerMeta:UnDisguise()
 	end
 	self:SetViewOffset(Vector(0, 0, 64))
 	self:SetViewOffsetDucked(Vector(0, 0, 28))
+	
+	self:CalculateSpeed()
 end
 
 function PlayerMeta:DisguiseLockRotation()

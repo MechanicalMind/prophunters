@@ -6,11 +6,13 @@ function Builder:WriteBlock(newLine)
 	local block = {}
 	block.text = self.curText
 	block.color = self.curColor
-	block.width = self.curWidth
+	block.startX = self.startX
 	block.newLine = newLine
 	table.insert(self.blocks, block)
 	self.curText = ""
+	self.startX = self.curWidth
 	if newLine then
+		self.startX = 0
 		self.curWidth = 0
 	end
 end
@@ -19,6 +21,7 @@ function Builder:Run()
 	self.blocks = {}
 	self.curColor = Color(255, 255, 255)
 	self.curWidth = 0
+	self.startX = 0
 	self.curText = ""
 
 	surface.SetFont(self.font)
@@ -34,6 +37,7 @@ function Builder:Run()
 				-- print(#spaces, "<" .. rest)
 
 				local sw, sh = surface.GetTextSize(spaces)
+				self.curText = self.curText .. spaces
 				self.curWidth = self.curWidth + sw
 
 				for word in rest:gmatch("([^%s]+[%s]*)") do
@@ -108,12 +112,9 @@ end
 
 function Builder:Paint(bx, by)
 	local y = 4
-	local x = 0
 	for k, line in pairs(self.blocks) do
-		draw.DrawText(line.text, self.font, bx + x, by + y, line.color or color_white, 0)
-		x = x + line.width
+		draw.DrawText(line.text, self.font, bx + line.startX, by + y, line.color or color_white, 0)
 		if line.newLine then
-			x = 0
 			y = y + draw.GetFontHeight(self.font)
 		end
 	end
