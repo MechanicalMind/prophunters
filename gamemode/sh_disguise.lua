@@ -73,6 +73,7 @@ function PlayerMeta:GetPropEyeTrace()
 	trace.start = self:GetPropEyePos()
 	trace.endpos = trace.start + self:GetAimVector() * 100000
 	trace.filter = self
+	trace.mask = MASK_SHOT
 	local tr = util.TraceLine(trace)
 	return tr
 end

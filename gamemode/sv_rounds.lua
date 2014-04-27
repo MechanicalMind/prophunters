@@ -117,6 +117,7 @@ function GM:StartRound()
 	local hunters, props = 0, 0
 	for k, ply in pairs(self:GetPlayingPlayers()) do
 		ply:Freeze(false)
+		ply.PropDmgPenalty = 0
 		if ply:Team() == 2 then
 			hunters = hunters + 1
 		elseif ply:Team() == 3 then
@@ -132,7 +133,8 @@ function GM:StartRound()
 	end
 
 	self.RoundSettings = {}
-	self.RoundSettings.RoundTime = math.Round(c * 0.8 * math.sqrt(props / hunters) + 30)
+	self.RoundSettings.RoundTime = math.Round((c * 0.5 / hunters + 60 * 4)  * math.sqrt(props / hunters))
+	print("Round time is " .. (self.RoundSettings.RoundTime / 60) .. " (" .. c .. " props)")
 
 	self:NetworkGameSettings()
 	self:SetGameState(2)
@@ -239,7 +241,7 @@ function GM:RoundsThink()
 	elseif self:GetGameState() == 2 then
 		self:CheckForVictory()
 	elseif self:GetGameState() == 3 then
-		if self:GetStateRunningTime() > 10 then
+		if self:GetStateRunningTime() > 25 then
 			self:SwapTeams()
 			self:SetupRound()
 		end

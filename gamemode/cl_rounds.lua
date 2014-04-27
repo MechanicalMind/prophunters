@@ -21,9 +21,10 @@ net.Receive("gamestate", function (len)
 
 
 	if GAMEMODE.GameState == 0 then
-		GAMEMODE:ScoreboardHide()
+		GAMEMODE:CloseEndRoundMenu()
 	elseif GAMEMODE.GameState == 1 then
-		GAMEMODE:ScoreboardHide()
+		GAMEMODE:CloseEndRoundMenu()
+
 		GAMEMODE.UpgradesNotif = {}
 		GAMEMODE.KillFeed = {}
 
@@ -48,9 +49,11 @@ net.Receive("round_victor", function (len)
 	if tab.reason == 2 || tab.reason == 3 then
 		tab.winningTeam = net.ReadUInt(16)
 	end
+		
 
+	// open the results panel
 	timer.Simple(2, function ()
-		GAMEMODE:ScoreboardRoundResults(tab)
+		GAMEMODE:EndRoundMenuResults(tab)
 	end)
 end)
 

@@ -257,6 +257,7 @@ function GM:DrawRoundTimer()
 	if self:GetGameState() == 1 then
 		local time = math.ceil(30 - self:GetStateRunningTime())
 		if time > 0 then
+			draw.ShadowText("Hunters will be released in", "RobotoHUD-15", ScrW() / 2, ScrH() / 3 - draw.GetFontHeight("RobotoHUD-40") / 2, color_white, 1, 4)
 			draw.ShadowText(time, "RobotoHUD-40", ScrW() / 2, ScrH() / 3, color_white, 1, 1)
 		end
 	elseif self:GetGameState() == 2 then

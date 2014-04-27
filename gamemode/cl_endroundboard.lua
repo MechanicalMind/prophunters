@@ -1,4 +1,6 @@
-
+if GAMEMODE && IsValid(GAMEMODE.EndRoundPanel) then
+	GAMEMODE.EndRoundPanel:Remove()
+end
 
 local menu
 
@@ -19,6 +21,11 @@ local function addPlayerItem(self, mlist, ply)
 		-- surface.DrawOutlinedRect(0, 0, w, h)
 
 		if IsValid(ply) && ply:IsPlayer() then
+			local col = team.GetColor(ply:Team())
+			if self.Hovered then
+				surface.SetDrawColor(col.r, col.g, col.b, 20)
+				surface.DrawRect(0, 0, w, h)
+			end
 			local s = 4
 
 			if ply:IsSpeaking() then
@@ -46,7 +53,6 @@ local function addPlayerItem(self, mlist, ply)
 				s = s + 32 + 4
 			end
 
-			col = team.GetColor(ply:Team())
 			draw.SimpleText(ply:Ping(), "RobotoHUD-20", w - 4, 0, col, 2)
 
 			draw.SimpleText(ply:Nick(), "RobotoHUD-20", s, 0, col, 0)
@@ -88,7 +94,7 @@ local function doPlayerItems(self, mlist)
 			del = true
 		end
 	end
-	// make sure the rest of the elements are moved up
+	// make sure the rest of the elements are sorted and moved up to fill gaps
 	if del || add then
 		timer.Simple(0, function() 
 			local childs = mlist:GetCanvas():GetChildren()
@@ -108,7 +114,13 @@ local function doPlayerItems(self, mlist)
 	end
 end
 
-concommand.Add("ph_endroundmenu", function ()
+concommand.Add("ph_endroundmenu_close", function ()
+	if IsValid(menu) then
+		menu:Close()
+	end
+end)
+
+function GM:OpenEndRoundMenu()
 	chat.Close()
 	if IsValid(menu) then
 		menu:SetVisible(true)
@@ -116,6 +128,7 @@ concommand.Add("ph_endroundmenu", function ()
 	end
 
 	menu = vgui.Create("DFrame")
+	GAMEMODE.EndRoundPanel = menu
 	menu:SetSize(ScrW() * 0.95, ScrH() * 0.95)
 	menu:Center()
 	menu:SetTitle("")
@@ -123,7 +136,7 @@ concommand.Add("ph_endroundmenu", function ()
 	menu:SetKeyboardInputEnabled(false)
 	menu:SetDeleteOnClose(false)
 	menu:SetDraggable(false)
-	menu:ShowCloseButton(true)
+	menu:ShowCloseButton(false)
 	menu:DockPadding(8, 8, 8, 8)
 
 	local matBlurScreen = Material( "pp/blurscreen" )
@@ -299,8 +312,55 @@ concommand.Add("ph_endroundmenu", function ()
 		end
 	end
 
+	// results section
+	local respnl = vgui.Create("DPanel", menu)
+	respnl:Dock(FILL)
+	respnl:DockMargin(20, 0, 0, 0)
+	respnl:DockPadding(0, 0, 0, 0)
+	function respnl:Paint(w, h)
+		surface.SetDrawColor(20, 20, 20, 150)
+		local t = draw.GetFontHeight("RobotoHUD-25") + 2
+		surface.DrawRect(0, t, w, h - t)
+	end
+
+	local header = vgui.Create("DLabel", respnl)
+	header:Dock(TOP)
+	header:SetFont("RobotoHUD-25")
+	header:SetTall(draw.GetFontHeight("RobotoHUD-25"))
+	header:SetText("Results")
+	header:DockMargin(4, 2, 4, 2)
+
+	local winner = vgui.Create("DLabel", respnl)
+	menu.WinningTeam = winner
+	winner:Dock(TOP)
+	winner:DockMargin(20, 20, 20, 20)
+	winner:SetTall(draw.GetFontHeight("RobotoHUD-45"))
+	winner:SetText("Props win!")
+	winner:SetColor(team.GetColor(3))
+	winner:SetFont("RobotoHUD-45")
+
+
 	-- GAMEMODE:EndRoundAddChatText("Words of radiance", Color(255, 0 ,0), "then red text", "then more", " and more", Color(0, 255, 0), " green with a space")
-end)
+end
+
+function GM:CloseEndRoundMenu()
+	if IsValid(menu) then
+		menu:Close()
+	end
+end
+
+function GM:EndRoundMenuResults(res)
+	self:OpenEndRoundMenu()
+	menu.Results = res
+	menu.ChatList:Clear()
+	if res.reason == 2 || res.reason == 3 then
+		menu.WinningTeam:SetText(team.GetName(res.reason) .. " win!")
+		menu.WinningTeam:SetColor(team.GetColor(res.reason))
+	else
+		menu.WinningTeam:SetText("Round tied")
+		menu.WinningTeam:SetColor(Color(150, 150, 150))
+	end
+end
 
 function GM:EndRoundAddChatText(...)
 	if !IsValid(menu) then

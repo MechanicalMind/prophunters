@@ -100,6 +100,9 @@ function GM:EntityTakeDamage( ent, dmginfo )
 				local tdmg = DamageInfo()
 				tdmg:SetDamage(math.min(dmginfo:GetDamage(), 3))
 				att:TakeDamageInfo(tdmg)
+
+				// increase stat for end of round (Angriest Hunter)
+				att.PropDmgPenalty = (att.PropDmgPenalty or 0) + tdmg:GetDamage()
 			end
 		end
 	end
