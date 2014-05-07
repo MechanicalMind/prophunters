@@ -4,5 +4,5 @@
 	"title"		"Codename Bluesubmarine"
 	"maps"		"^ph_"
 	"menusystem"	"1"
-	"version" 	"0.0.1"
+	"version" 	"0.0.2"
 }
