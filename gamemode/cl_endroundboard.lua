@@ -339,8 +339,43 @@ function GM:OpenEndRoundMenu()
 	winner:SetColor(team.GetColor(3))
 	winner:SetFont("RobotoHUD-45")
 
+	local timeleft = vgui.Create("DPanel", respnl)
+	timeleft:Dock(BOTTOM)
+	timeleft:SetTall(draw.GetFontHeight("RobotoHUD-20"))
+	local col = Color(150, 150, 150)
+	function timeleft:Paint(w, h)
+		if GAMEMODE:GetGameState() == 3 then
+			local settings = GAMEMODE:GetRoundSettings()
+			local roundTime = settings.NextRoundTime or 30
+			local time = math.max(0, roundTime - GAMEMODE:GetStateRunningTime())
+			draw.SimpleText("Next round in " .. math.ceil(time), "RobotoHUD-20", w - 4, 0, col, 2)
+		end
+	end
 
-	-- GAMEMODE:EndRoundAddChatText("Words of radiance", Color(255, 0 ,0), "then red text", "then more", " and more", Color(0, 255, 0), " green with a space")
+	local mlist = vgui.Create("DScrollPanel", respnl)
+	menu.ResultList = mlist
+	mlist:Dock(FILL)
+	function mlist:Paint(w, h)
+	end
+
+	// child positioning
+	local canvas = mlist:GetCanvas()
+	canvas:DockPadding(0, 0, 0, 0)
+	function canvas:OnChildAdded( child )
+		child:Dock(TOP)
+		child:DockMargin(0, 0, 0, 16)
+	end
+
+	-- self:EndRoundMenuResults({
+	-- 	reason = 1,
+	-- 	playerAwards = {
+	-- 		PropDamage = {
+	-- 			player = Entity(1),
+	-- 			name = "Mechanical Mind",
+	-- 			color = team.GetColor(2)
+	-- 		}
+	-- 	}
+	-- })
 end
 
 function GM:CloseEndRoundMenu()
@@ -349,16 +384,51 @@ function GM:CloseEndRoundMenu()
 	end
 end
 
+local awards = {
+	PropDamage = {
+		name = "Angriest Player",
+		desc = "Player with the most prop damage"
+	},
+	LastPropStanding = {
+		name = "Longest Survivor",
+		desc = "The last prop alive"
+	},
+	LeastMovement = {
+		name = "Least Movement",
+		desc = "Prop who moved the least"
+	}
+}
+
 function GM:EndRoundMenuResults(res)
 	self:OpenEndRoundMenu()
 	menu.Results = res
 	menu.ChatList:Clear()
+	menu.ResultList:Clear()
 	if res.reason == 2 || res.reason == 3 then
 		menu.WinningTeam:SetText(team.GetName(res.reason) .. " win!")
 		menu.WinningTeam:SetColor(team.GetColor(res.reason))
 	else
 		menu.WinningTeam:SetText("Round tied")
 		menu.WinningTeam:SetColor(Color(150, 150, 150))
+	end
+
+	//playerAwards
+	for k, award in pairs(awards) do
+		print(k, res.playerAwards[k])
+		if res.playerAwards[k] then
+			local t = res.playerAwards[k]
+			local pnl = vgui.Create("DPanel")
+			pnl:SetTall(math.max(draw.GetFontHeight("RobotoHUD-35"), draw.GetFontHeight("RobotoHUD-15") + draw.GetFontHeight("RobotoHUD-20") * 1.1))
+			function pnl:Paint(w, h)
+				surface.SetDrawColor(50, 50, 50)
+				-- surface.DrawOutlinedRect(0, 0, w, h)
+				draw.DrawText(award.name, "RobotoHUD-20", 4, 0, Color(220, 220, 220), 0)
+				draw.DrawText(award.desc, "RobotoHUD-15", 4, draw.GetFontHeight("RobotoHUD-20"), Color(120, 120, 120), 0)
+				draw.DrawText(t.name, "RobotoHUD-25", w - 4, h / 2 - draw.GetFontHeight("RobotoHUD-25") / 2, t.color, 2)
+			end
+
+			menu.ResultList:AddItem(pnl)
+		end
 	end
 end
 

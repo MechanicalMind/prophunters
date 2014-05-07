@@ -27,7 +27,7 @@ function PlayerMeta:DisguiseAsProp(ent)
 	local hullxy, hullz = ent:GetPropSize()
 	if !self:CanFitHull(hullxy, hullxy, hullz) then
 		local ct = ChatText()
-		ct:Add("Not enough room to disguise as that, move into a more open area", Color(255, 50, 50))
+		ct:Add("Not enough room to change", Color(255, 50, 50))
 		ct:Send(self)
 		return
 	end

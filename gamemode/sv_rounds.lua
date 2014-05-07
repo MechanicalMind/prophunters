@@ -114,10 +114,13 @@ end
 
 function GM:StartRound()
 
+	self.LastPropDeath = nil
+
 	local hunters, props = 0, 0
 	for k, ply in pairs(self:GetPlayingPlayers()) do
 		ply:Freeze(false)
 		ply.PropDmgPenalty = 0
+		ply.PropMovement = 0
 		if ply:Team() == 2 then
 			hunters = hunters + 1
 		elseif ply:Team() == 3 then
@@ -165,13 +168,57 @@ function GM:EndRound(reason)
 		winningTeam = 3
 	end
 
+	self.PlayerAwards = {}
+
+	local propPly, propDmg = nil, 0
+	local movePly, moveAmo
+	for k, ply in pairs(self:GetPlayingPlayers()) do
+		if ply:Team() == 2 then // hunters
+
+			// get hunter with most prop damage
+			if ply.PropDmgPenalty > propDmg then
+				propDmg = ply.PropDmgPenalty
+				propPly = ply
+			end
+		else
+
+			// get prop with least movement
+			if moveAmo == nil || ply.PropMovement < moveAmo then
+				moveAmo = ply.PropMovement
+				movePly = ply
+			end
+		end
+	end
+
+	if propPly then
+		self.PlayerAwards["PropDamage"] = propPly
+	end
+
+	if movePly then
+		self.PlayerAwards["LeastMovement"] = movePly
+	end
+
+	if IsValid(self.LastPropDeath) && reason == 2 then
+		self.PlayerAwards["LastPropStanding"] = self.LastPropDeath
+	end
 
 	net.Start("round_victor")
 	net.WriteUInt(reason, 8)
 	if winningTeam then
 		net.WriteUInt(winningTeam, 16)
 	end
+	for k, v in pairs(self.PlayerAwards) do
+		net.WriteUInt(1, 8)
+		net.WriteString(tostring(k))
+		net.WriteEntity(v)
+		net.WriteVector(v:GetPlayerColor())
+		net.WriteString(v:Nick())
+	end
+	net.WriteUInt(0, 8)
 	net.Broadcast()
+
+	self.RoundSettings.NextRoundTime = 25
+	self:NetworkGameSettings()
 
 	for k, ply in pairs(self:GetPlayingPlayers()) do
 		if ply:Team() == winningTeam then
@@ -238,10 +285,16 @@ function GM:RoundsThink()
 		if self:GetStateRunningTime() > 30 then
 			self:StartRound()
 		end
+
+		for k, ply in pairs(self:GetPlayingPlayers()) do
+			if ply:Team() == 3 then
+				ply.PropMovement = ply.PropMovement + ply:GetVelocity():Length()
+			end
+		end
 	elseif self:GetGameState() == 2 then
 		self:CheckForVictory()
 	elseif self:GetGameState() == 3 then
-		if self:GetStateRunningTime() > 25 then
+		if self:GetStateRunningTime() > (self.RoundSettings.NextRoundTime or 30) then
 			self:SwapTeams()
 			self:SetupRound()
 		end

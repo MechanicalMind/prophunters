@@ -21,10 +21,7 @@ net.Receive("gamestate", function (len)
 
 
 	if GAMEMODE.GameState == 0 then
-		GAMEMODE:CloseEndRoundMenu()
 	elseif GAMEMODE.GameState == 1 then
-		GAMEMODE:CloseEndRoundMenu()
-
 		GAMEMODE.UpgradesNotif = {}
 		GAMEMODE.KillFeed = {}
 
@@ -41,6 +38,10 @@ net.Receive("gamestate", function (len)
 		-- 	GAMEMODE.StartSiren:FadeOut(0.3)
 		-- end
 	end
+
+	if GAMEMODE.GameState != 2 then
+		GAMEMODE:CloseEndRoundMenu()
+	end
 end)
 
 net.Receive("round_victor", function (len)
@@ -49,7 +50,19 @@ net.Receive("round_victor", function (len)
 	if tab.reason == 2 || tab.reason == 3 then
 		tab.winningTeam = net.ReadUInt(16)
 	end
-		
+	
+	tab.playerAwards = {}
+	while net.ReadUInt(8) != 0 do
+		local k = net.ReadString()
+		local v = net.ReadEntity()
+		local col = net.ReadVector()
+		local name = net.ReadString()
+		tab.playerAwards[k] = {
+			player = v,
+			name = name,
+			color = Color(col.x * 255, col.y * 255, col.z * 255)	
+		}
+	end
 
 	// open the results panel
 	timer.Simple(2, function ()

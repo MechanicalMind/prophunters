@@ -144,6 +144,9 @@ function GM:DoPlayerDeath(ply, attacker, dmginfo)
 	if ply:IsDisguised() && ply:Team() == 3 then
 		ply:EmitSound("ambient/voices/f_scream1.wav")
 	end
+	if ply:Team() == 3 then
+		self.LastPropDeath = ply
+	end
 	ply:UnDisguise()
 
 	ply:Freeze(false) // why?, *sigh*
@@ -263,27 +266,8 @@ function GM:PlayerSelectSpawn( pl )
 
 	local spawnPoints = {}
 
-	if pl:Team() == 1 then
-		-- (Old) GMod Maps
-		spawnPoints = table.Add( spawnPoints, ents.FindByClass( "gmod_player_start" ) )
-		
-		-- TF Maps
-		spawnPoints = table.Add( spawnPoints, ents.FindByClass( "info_player_teamspawn" ) )
-		
-		-- INS Maps
-		spawnPoints = table.Add( spawnPoints, ents.FindByClass( "ins_spawnpoint" ) )  
 
-		-- AOC Maps
-		spawnPoints = table.Add( spawnPoints, ents.FindByClass( "aoc_spawnpoint" ) )
-
-		-- Dystopia Maps
-		spawnPoints = table.Add( spawnPoints, ents.FindByClass( "dys_spawn_point" ) )
-
-		-- SYN Maps
-			spawnPoints = table.Add( spawnPoints, ents.FindByClass( "info_player_coop" ) )
-
-		spawnPoints = table.Add( spawnPoints, ents.FindByClass( "info_player_deathmatch" ) )
-	elseif pl:Team() == 3 then // props
+	if pl:Team() == 3 then // props
 		spawnPoints = table.Add( spawnPoints, ents.FindByClass( "info_player_terrorist" ) )
 		spawnPoints = table.Add( spawnPoints, ents.FindByClass( "info_player_axis" ) )
 		spawnPoints = table.Add( spawnPoints, ents.FindByClass( "info_player_combine" ) )
@@ -302,6 +286,32 @@ function GM:PlayerSelectSpawn( pl )
 		spawnPoints = table.Add( spawnPoints, ents.FindByClass( "info_player_zombie" ) )      
 	end
 
+	local Count = table.Count( spawnPoints )
+
+	if pl:Team() == 1 || Count == 0 then
+		-- (Old) GMod Maps
+		spawnPoints = table.Add( spawnPoints, ents.FindByClass( "gmod_player_start" ) )
+		
+		-- TF Maps
+		spawnPoints = table.Add( spawnPoints, ents.FindByClass( "info_player_teamspawn" ) )
+		
+		-- INS Maps
+		spawnPoints = table.Add( spawnPoints, ents.FindByClass( "ins_spawnpoint" ) )  
+
+		-- AOC Maps
+		spawnPoints = table.Add( spawnPoints, ents.FindByClass( "aoc_spawnpoint" ) )
+
+		-- Dystopia Maps
+		spawnPoints = table.Add( spawnPoints, ents.FindByClass( "dys_spawn_point" ) )
+
+		-- SYN Maps
+		spawnPoints = table.Add( spawnPoints, ents.FindByClass( "info_player_coop" ) )
+
+		spawnPoints = table.Add( spawnPoints, ents.FindByClass( "info_player_deathmatch" ) )
+	end
+
+
+	// recount
 	local Count = table.Count( spawnPoints )
 	
 	if ( Count == 0 ) then
