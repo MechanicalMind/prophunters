@@ -6,13 +6,23 @@ Taunts = {}
 TauntCategories = {}
 AllowedTauntSounds = {}
 
-local function addTaunt(name, snd, sex, cats)
+local function addTaunt(name, snd, pteam, sex, cats)
 	if type(snd) != "table" then snd = {snd} end
 	if #snd == 0 then error("No sounds for " .. name) return end
 
 	local t = {}
 	t.sound = snd
 	t.categories = cats
+	if type(pteam) == "string" then
+		pteam = pteam:lower()
+		if pteam == "prop" || pteam == "props" then
+			t.team = 3
+		elseif pteam == "hunter" || pteam == "hunters" then
+			t.team = 2
+		end
+	else
+		t.team = tonumber(pteam)
+	end
 	if sex && #sex > 0 then
 		t.sex = sex
 	end
@@ -34,7 +44,7 @@ local function addTaunt(name, snd, sex, cats)
 	end
 end
 
-function GM:LoadTaunts(name, overridePath)
+function GM:LoadTaunts()
 	local tempG = {}
 	tempG.addTaunt = addTaunt
 	local meta = {}
@@ -54,7 +64,7 @@ function GM:LoadTaunts(name, overridePath)
 		local b, err = pcall(f)
 
 		if !b then
-			MsgC(Color(255, 50, 50), "Loading taunts failed " .. name .. "\nError: " .. err .. "\n")
+			MsgC(Color(255, 50, 50), "Loading taunts failed " .. name .. ".lua\nError: " .. err .. "\n")
 		end
 	end
 end

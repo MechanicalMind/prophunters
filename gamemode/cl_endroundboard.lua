@@ -419,7 +419,6 @@ function GM:EndRoundMenuResults(res)
 
 	//playerAwards
 	for k, award in pairs(awards) do
-		print(k, res.playerAwards[k])
 		if res.playerAwards[k] then
 			local t = res.playerAwards[k]
 			local pnl = vgui.Create("DPanel")

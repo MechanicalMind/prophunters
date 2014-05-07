@@ -8,7 +8,6 @@ concommand.Add("ph_taunt", function (ply, com, args)
 	end
 
 	if !ply:Alive() then return end
-	if ply:Team() != 3 then return end
 
 	if ply.Taunting && ply.Taunting > CurTime() then
 		return
@@ -21,6 +20,10 @@ concommand.Add("ph_taunt", function (ply, com, args)
 
 	local t = AllowedTauntSounds[snd]
 	if t.sex && t.sex != ply.ModelSex then
+		return
+	end
+
+	if t.team && t.team != ply:Team() then
 		return
 	end
 

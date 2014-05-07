@@ -19,6 +19,9 @@ local function fillList(mlist, taunts)
 		if t.sex && t.sex != GAMEMODE.PlayerModelSex then
 			continue
 		end
+		if t.team && LocalPlayer():Team() != t.team then
+			continue
+		end
 		local but = vgui.Create("DButton")
 		but:SetTall(draw.GetFontHeight("RobotoHUD-15") * 1.4)
 		but:SetText("")
@@ -68,14 +71,26 @@ local function addCat(clist, name, taunts, mlist)
 	clist:AddItem(but)
 end
 
-local function openTauntMenu()
-	if LocalPlayer():Team() != 3 then
-		if IsValid(menu) then
-			menu:SetVisible(false)
+local function fillCats(clist, mlist)
+	clist:Clear()
+	addCat(clist, "All", Taunts, mlist)
+	for k, taunts in pairs(TauntCategories) do
+		local c = 0
+		for a, t in pairs(taunts) do
+			if t.team && LocalPlayer():Team() != t.team then
+				continue
+			end
+			c = c + 1
 		end
-		return
+		if c > 0 then
+			addCat(clist, k, taunts, mlist)
+		end
 	end
+end
+
+local function openTauntMenu()
 	if IsValid(menu) then
+		fillCats(menu.CatList, menu.TauntList)
 		fillList(menu.TauntList, menu.CurrentTaunts)
 		menu:SetVisible(!menu:IsVisible())
 		return
@@ -106,6 +121,7 @@ local function openTauntMenu()
 	end
 
 	local clist = vgui.Create("DScrollPanel", menu)
+	menu.CatList = clist
 	clist:Dock(LEFT)
 	clist:SetWide(menu:GetWide() * 0.3)
 	clist:DockMargin(0, 0, 4, 0)
@@ -143,11 +159,7 @@ local function openTauntMenu()
 		child:DockMargin( 0,0,0,4 )
 	end
 
-	addCat(clist, "All", Taunts, mlist)
-	for k, v in pairs(TauntCategories) do
-		addCat(clist, k, v, mlist)
-	end
-
+	fillCats(clist, mlist)
 	fillList(mlist, Taunts)
 end
 
