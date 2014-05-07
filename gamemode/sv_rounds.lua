@@ -121,6 +121,7 @@ function GM:StartRound()
 		ply:Freeze(false)
 		ply.PropDmgPenalty = 0
 		ply.PropMovement = 0
+		ply.HunterKills = 0
 		if ply:Team() == 2 then
 			hunters = hunters + 1
 		elseif ply:Team() == 3 then
@@ -171,6 +172,7 @@ function GM:EndRound(reason)
 	self.PlayerAwards = {}
 
 	local propPly, propDmg = nil, 0
+	local killsPly, killsAmo = nil, 0
 	local movePly, moveAmo
 	for k, ply in pairs(self:GetPlayingPlayers()) do
 		if ply:Team() == 2 then // hunters
@@ -179,6 +181,12 @@ function GM:EndRound(reason)
 			if ply.PropDmgPenalty > propDmg then
 				propDmg = ply.PropDmgPenalty
 				propPly = ply
+			end
+
+			// get hunter with most kills
+			if ply.HunterKills > killsAmo then
+				killsAmo = ply.PropDmgPenalty
+				killsPly = ply
 			end
 		else
 
@@ -196,6 +204,10 @@ function GM:EndRound(reason)
 
 	if movePly then
 		self.PlayerAwards["LeastMovement"] = movePly
+	end
+	
+	if killsPly then
+		self.PlayerAwards["MostKills"] = killsPly
 	end
 
 	if IsValid(self.LastPropDeath) && reason == 2 then

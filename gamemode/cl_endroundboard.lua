@@ -355,6 +355,7 @@ function GM:OpenEndRoundMenu()
 	local mlist = vgui.Create("DScrollPanel", respnl)
 	menu.ResultList = mlist
 	mlist:Dock(FILL)
+	mlist:DockMargin(20, 0, 20, 0)
 	function mlist:Paint(w, h)
 	end
 
@@ -385,17 +386,21 @@ function GM:CloseEndRoundMenu()
 end
 
 local awards = {
-	PropDamage = {
-		name = "Angriest Player",
-		desc = "Player with the most prop damage"
-	},
 	LastPropStanding = {
 		name = "Longest Survivor",
-		desc = "The last prop alive"
+		desc = "Prop who survived longest"
 	},
 	LeastMovement = {
 		name = "Least Movement",
 		desc = "Prop who moved the least"
+	},
+	MostKills = {
+		name = "Most Kills",
+		desc = "Hunter who had the most kills"
+	},
+	PropDamage = {
+		name = "Angriest Player",
+		desc = "Hunter who shot at props randomly the most"
 	}
 }
 
@@ -422,9 +427,9 @@ function GM:EndRoundMenuResults(res)
 			function pnl:Paint(w, h)
 				surface.SetDrawColor(50, 50, 50)
 				-- surface.DrawOutlinedRect(0, 0, w, h)
-				draw.DrawText(award.name, "RobotoHUD-20", 4, 0, Color(220, 220, 220), 0)
-				draw.DrawText(award.desc, "RobotoHUD-15", 4, draw.GetFontHeight("RobotoHUD-20"), Color(120, 120, 120), 0)
-				draw.DrawText(t.name, "RobotoHUD-25", w - 4, h / 2 - draw.GetFontHeight("RobotoHUD-25") / 2, t.color, 2)
+				draw.DrawText(award.name, "RobotoHUD-20", 0, 0, Color(220, 220, 220), 0)
+				draw.DrawText(award.desc, "RobotoHUD-15", 0, draw.GetFontHeight("RobotoHUD-20"), Color(120, 120, 120), 0)
+				draw.DrawText(t.name, "RobotoHUD-25", w, h / 2 - draw.GetFontHeight("RobotoHUD-25") / 2, t.color, 2)
 			end
 
 			menu.ResultList:AddItem(pnl)

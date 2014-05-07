@@ -32,7 +32,12 @@ function Builder:Run()
 			self.curColor = v
 		elseif type(v) == "string" then
 			local txt = v
+			local firstChunk = true
 			for chunk in (txt .. "\n"):gmatch("([^\n]-)\n") do
+				if !firstChunk then
+					self:WriteBlock(true)
+				end
+				firstChunk = false
 				local spaces, rest = chunk:match("^([%s]*)(.*)$")
 				-- print(#spaces, "<" .. rest)
 
@@ -95,7 +100,7 @@ function Builder:Run()
 					end
 				end
 				if #chunk == 0 then
-					self:WriteBlock(true)
+					-- self:WriteBlock(true)
 				end
 			end // end chunk loop
 		end

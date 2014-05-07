@@ -53,88 +53,6 @@ Powerups can be found inside crates on the map. Blow up the crates to reveal pow
 
 addHelpText("Speed Up", 2, "")
 
-local function wrapText(font, maxWidth, txt)
-	surface.SetFont(font)
-	local sw, sh = surface.GetTextSize(" ")
-	local lines = {}
-	// add a new line because it ignore the last line
-	for chunk in (txt .. "\n"):gmatch("([^\n]-)\n") do
-		local curWidth = 0
-		local curText
-		for word in chunk:gmatch("[^%s]+") do
-			local w, h = surface.GetTextSize(word)
-
-			// can't we fit the word on the same line
-			if w + sw + curWidth > maxWidth then
-
-				// is the word too long for a single line (then we need to split it)
-				if w + sw > maxWidth then
-					curWidth = curWidth + sw
-					curText = curText .. " "
-
-					// while our current word cannot fit in the line
-					while curWidth + w > maxWidth do
-
-						// find the number of chracters that can fit
-						local chars = 1
-						while true do
-							local aw, ah = surface.GetTextSize(word:sub(1, chars))
-							if chars > #word then
-								print('error' .. chars)
-								break
-							end
-							if aw + curWidth > maxWidth then
-								chars = chars - 1
-								break
-							end
-							chars = chars + 1
-						end
-
-						// add the partial word to line
-						local line = {}
-						line.text = curText .. word:sub(1, chars)
-						table.insert(lines, line)
-
-						// start a new line with the rest of the characters
-						curWidth = 0
-						curText = ""
-
-						word = word:sub(chars + 1)
-						w, h = surface.GetTextSize(word)
-					end
-
-					curWidth = w
-					curText = word
-				else
-					// put the word on a new line
-					local line = {}
-					line.text = curText or ""
-					table.insert(lines, line)
-
-					curWidth = w
-					curText = word
-				end
-			else
-				// add the word to the current line
-				if curText then
-					curText = curText .. " " .. word
-				else
-					curText = word
-				end
-				curWidth = curWidth + sw + w
-			end
-		end
-		if curText then
-			local line = {}
-			line.text = curText
-			table.insert(lines, line)
-		elseif #chunk == 0 then
-			table.insert(lines, {text = ""})
-		end
-	end
-	return lines
-end
-
 local menu
 local function openHelpScreen()
 	if IsValid(menu) then
@@ -235,10 +153,10 @@ local function openHelpScreen()
 		textscroll:AddItem(pnl)
 		function pnl:PerformLayout()
 			if self.Text then
-				self.TextLines = wrapText("RobotoHUD-15", self:GetWide() - 16, self.Text)
+				self.TextLines = WrapText("RobotoHUD-15", self:GetWide() - 16, {self.Text})
 			end
 			if self.TextLines then
-				local y = #self.TextLines * draw.GetFontHeight("RobotoHUD-15")
+				local y = self.TextLines.height
 				self:SetTall(y + 8)
 			end
 		end
@@ -247,11 +165,7 @@ local function openHelpScreen()
 			-- surface.SetDrawColor(0, 0, 0, 255)
 			-- surface.DrawOutlinedRect(0, 0, w, h)
 			if self.TextLines then
-				local y = 4
-				for k, line in pairs(self.TextLines) do
-					draw.DrawText(line.text, "RobotoHUD-15", 8, y, color_white, 0)
-					y = y + draw.GetFontHeight("RobotoHUD-15")
-				end
+				self.TextLines:Paint(8, 4)
 			end
 		end
 	end
