@@ -147,7 +147,7 @@ local function openHelpScreen()
 		textscroll:AddItem(pnl)
 		function pnl:PerformLayout()
 			if self.Text then
-				self.TextLines = WrapText("RobotoHUD-15", self:GetWide() - 16, {self.Text})
+				self.TextLines = WrapText("RobotoHUD-L15", self:GetWide() - 16, {self.Text})
 			end
 			if self.TextLines then
 				local y = self.TextLines.height

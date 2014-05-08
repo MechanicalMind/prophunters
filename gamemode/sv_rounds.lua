@@ -297,14 +297,14 @@ function GM:RoundsThink()
 		if self:GetStateRunningTime() > 30 then
 			self:StartRound()
 		end
+	elseif self:GetGameState() == 2 then
+		self:CheckForVictory()
 
 		for k, ply in pairs(self:GetPlayingPlayers()) do
 			if ply:Team() == 3 then
-				ply.PropMovement = ply.PropMovement + ply:GetVelocity():Length()
+				ply.PropMovement = (ply.PropMovement or 0) + ply:GetVelocity():Length()
 			end
 		end
-	elseif self:GetGameState() == 2 then
-		self:CheckForVictory()
 	elseif self:GetGameState() == 3 then
 		if self:GetStateRunningTime() > (self.RoundSettings.NextRoundTime or 30) then
 			self:SwapTeams()

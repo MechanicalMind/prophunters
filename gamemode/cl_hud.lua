@@ -8,6 +8,13 @@ local function createRoboto(s)
 		antialias = true,
 		italic = false
 	})
+	surface.CreateFont( "RobotoHUD-L" .. s , {
+		font = "Roboto",
+		size = math.Round(ScrW() / 1000 * s),
+		weight = 500,
+		antialias = true,
+		italic = false
+	})
 end
 
 for i = 5, 50, 5 do
@@ -46,6 +53,12 @@ function GM:HUDPaint()
 	self:DrawKillFeed()
 end
 
+local helpKeysProps = {
+	{"Left", "Disguise as prop"},
+	{"C", "Lock prop rotation"}
+}
+
+
 function GM:DrawGameHUD()
 	if LocalPlayer():Alive() then
 	end
@@ -81,6 +94,36 @@ function GM:DrawGameHUD()
 			col = Color(col.x * 255, col.y * 255, col.z * 255)
 			col.a = (1 - (CurTime() - self.LookedFade) / 2) * 255
 			draw.ShadowText(name, "RobotoHUD-20", ScrW() / 2, ScrH() / 2 + 80, col, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, Color(0, 0, 0, col.a))
+		end
+	end
+
+
+	local help 
+	if LocalPlayer():Team() == 3 then
+		help = helpKeysProps
+	end
+
+
+
+	if help && self:GetGameState() == 1 then
+		local fh = draw.GetFontHeight("RobotoHUD-L15")
+		local w, h = math.ceil(ScrW() * 0.09), #help * fh
+		local x = 20
+		local y = ScrH() / 2 - h / 2
+
+		local i = 0
+		local tw = 0
+		for k, t in pairs(help) do
+			surface.SetFont("RobotoHUD-15")
+			local w,h = surface.GetTextSize(t[1]:upper())
+			tw = math.max(tw, w)
+		end
+		for k, t in pairs(help) do
+			surface.SetFont("RobotoHUD-15")
+			local w,h = surface.GetTextSize(t[1]:upper())
+			draw.ShadowText(t[1]:upper(), "RobotoHUD-15", x + tw / 2, y + i * fh, color_white, 1, 0)
+			draw.ShadowText(t[2], "RobotoHUD-L15", x + tw + 10, y + i * fh, color_white, 0, 0)
+			i = i + 1
 		end
 	end
 end
