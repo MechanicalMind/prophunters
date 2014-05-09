@@ -29,7 +29,7 @@ local function addPlayerItem(self, mlist, ply, pteam)
 		-- surface.DrawOutlinedRect(0, 0, w, h)
 
 		if IsValid(ply) && ply:IsPlayer() then
-			local s = 8
+			local s = 4
 
 			if !ply:Alive() then
 				surface.SetMaterial(skull)
@@ -51,13 +51,12 @@ local function addPlayerItem(self, mlist, ply, pteam)
 				s = s + 32 + 4
 			end
 
-			local col = ply:GetPlayerColor()
-			col = Color(col.x * 255, col.y * 255, col.z * 255)
-			draw.ShadowText(ply:Ping(), "RobotoHUD-20", w - 8, 0, col, 2)
+			local col = color_white
+			draw.ShadowText(ply:Ping(), "RobotoHUD-L20", w - 4, 0, col, 2)
 
-			draw.ShadowText(("|"):rep(math.min(10, ply:GetScore())) .. " " .. ply:GetScore(), "RobotoHUD-20", w / 2 + 4, 0, col, 0)
+			draw.ShadowText(("|"):rep(math.min(10, ply:GetScore())) .. " " .. ply:GetScore(), "RobotoHUD-L20", w / 2, 0, col, 0)
 
-			draw.ShadowText(ply:Nick(), "RobotoHUD-20", s, 0, col, 0)
+			draw.ShadowText(ply:Nick(), "RobotoHUD-L20", s, 0, col, 0)
 		end
 	end
 
@@ -103,13 +102,20 @@ end
 local function makeTeamList(parent, pteam)
 	local mlist
 	local pnl = vgui.Create("DPanel", parent)
-	pnl:DockPadding(1, 1, 1, 1)
-	function pnl:Paint(w, h)
-		surface.SetDrawColor(90, 90, 90, 255)
-		surface.DrawRect(0, 0, w, h)
+	pnl:DockPadding(0, 0, 0, 0)
 
-		surface.SetDrawColor(20, 20, 20)
-		surface.DrawOutlinedRect(0, 0, w, h)
+	local hs = math.Round(draw.GetFontHeight("RobotoHUD-25") * 1.1)
+	function pnl:Paint(w, h)
+		surface.SetDrawColor(220, 220, 220, 50)
+		-- surface.DrawRect(0, 0, w, h)
+
+		surface.SetDrawColor(68, 68, 68, 120)
+		surface.DrawLine(0, hs, 0, h - 1)
+		surface.DrawLine(w - 1, hs, w - 1, h - 1)
+		surface.DrawLine(0, h - 1, w, h - 1)
+		
+		surface.SetDrawColor(55, 55, 55, 120)
+		surface.DrawRect(1, hs, w - 2, h - hs)
 	end
 
 	function pnl:Think()
@@ -123,12 +129,14 @@ local function makeTeamList(parent, pteam)
 	local headp = vgui.Create("DPanel", pnl)
 	headp:DockMargin(0,0,0,4)
 	headp:Dock(TOP)
-	headp:SetTall(draw.GetFontHeight("RobotoHUD-25") * 1.1)
+	headp:SetTall(hs)
 	function headp:Paint(w, h) 
 		surface.SetDrawColor(68, 68, 68, 255)
-		surface.DrawRect(0, 0, w, h)
+		-- surface.DrawRect(0, 0, w, h)
 
-		draw.ShadowText(team.GetName(pteam), "RobotoHUD-25", 2, 0, team.GetColor(pteam), 0)
+		draw.RoundedBoxEx(4, 0, 0, w, h, Color(68, 68, 68, 120), true, true, false, false)
+
+		draw.ShadowText(team.GetName(pteam), "RobotoHUD-25", 6, 0, team.GetColor(pteam), 0)
 	end
 
 	local but = vgui.Create("DButton", headp)
@@ -136,7 +144,7 @@ local function makeTeamList(parent, pteam)
 	but:SetText("")
 	surface.SetFont("RobotoHUD-20")
 	local tw, th = surface.GetTextSize("Join team")
-	but:SetWide(tw + 4)
+	but:SetWide(tw + 6)
 	function but:DoClick()
 		RunConsoleCommand("car_jointeam", pteam)
 	end
@@ -148,7 +156,7 @@ local function makeTeamList(parent, pteam)
 
 		local col = table.Copy(team.GetColor(pteam))
 		if self:IsDown() then
-			surface.SetDrawColor(50,50,50,120)
+			surface.SetDrawColor(12,50,50,120)
 			-- surface.DrawRect(1, 1, w - 2, h - 2)
 			col.r = col.r * 0.8
 			col.g = col.g * 0.8
@@ -171,21 +179,22 @@ local function makeTeamList(parent, pteam)
 
 	// child positioning
 	local canvas = mlist:GetCanvas()
-	canvas:DockPadding(0, 0, 0, 0)
+	canvas:DockPadding(8, 8, 8, 8)
 	function canvas:OnChildAdded( child )
 		child:Dock( TOP )
 		child:DockMargin( 0,0,0,4 )
 	end
 
 	local head = vgui.Create("DPanel")
-	head:SetTall(draw.GetFontHeight("RobotoHUD-20"))
+	head:SetTall(draw.GetFontHeight("RobotoHUD-15") * 1.05)
 	head.perm = true
+	local col = Color(190, 190, 190)
 	function head:Paint(w, h)
-		draw.ShadowText("Name", "RobotoHUD-20", 4, 0, color_white, 0)
+		draw.ShadowText("Name", "RobotoHUD-15", 4, 0, col, 0)
 
-		draw.ShadowText("Score", "RobotoHUD-20", w / 2, 0, color_white, 0)
+		draw.ShadowText("Score", "RobotoHUD-15", w / 2, 0, col, 0)
 
-		draw.ShadowText("Ping", "RobotoHUD-20", w - 4, 0, color_white, 2)
+		draw.ShadowText("Ping", "RobotoHUD-15", w - 4, 0, col, 2)
 	end
 	mlist:AddItem(head)
 
@@ -224,11 +233,8 @@ function GM:ScoreboardShow()
 		end
 
 		function menu:Paint(w, h)
-			surface.SetDrawColor(130, 130, 130, 255)
+			surface.SetDrawColor(40,40,40,230)
 			surface.DrawRect(0, 0, w, h)
-
-			surface.SetDrawColor(80, 80, 80, 255)
-			surface.DrawOutlinedRect(0, 0, w, h)
 		end
 
 		menu.Credits = vgui.Create("DPanel", menu)
@@ -249,60 +255,17 @@ function GM:ScoreboardShow()
 			self:SetTall(h)
 		end
 
-		local results = vgui.Create("DPanel", menu)
-		menu.ResultsPanel = results
-		results:Dock(TOP)
-		results:DockMargin(0,0,0,4)
-		results:SetTall(draw.GetFontHeight("RobotoHUD-25"))
-		function results:Paint(w, h)
-			surface.SetDrawColor(90, 90, 90, 255)
-			surface.DrawRect(0, 0, w, h)
-
-			if self.Results then
-				if self.Results.reason == 1 then
-					draw.ShadowText("Round tied", "RobotoHUD-20", 4, 4, color_white, 0)
-
-					local f20 = draw.GetFontHeight("RobotoHUD-20")
-					draw.ShadowText("Everyone loses", "RobotoHUD-50", f20 + 4, f20 + 4, color_white, 0)
-				elseif self.Results.reason == 2 || self.Results.reason == 3 then
-					local pteam = self.Results.winningTeam
-					local col = team.GetColor(pteam)
-					local name = team.GetName(pteam)
-
-					surface.SetDrawColor(col)
-					surface.DrawRect(0, 0, w, h)
-
-					surface.SetDrawColor(50, 50, 50, 50)
-					surface.DrawRect(0, h / 2, w, h / 2)
-
-					local f20 = draw.GetFontHeight("RobotoHUD-20")
-					draw.ShadowText("The winner is", "RobotoHUD-20", 4, 4, color_white, 0)
-
-					surface.SetFont("RobotoHUD-50")
-					local tw, th = surface.GetTextSize(name)
-
-					draw.ShadowText(name, "RobotoHUD-50", f20 + 4, f20 + 4, color_white, 0)
-				end
-			end
-
-			surface.SetDrawColor(20, 20, 20)
-			surface.DrawOutlinedRect(0, 0, w, h)
+		local bottom = vgui.Create("DPanel", menu)
+		bottom:Dock(FILL)
+		function bottom:Paint(w, h)
+			surface.SetDrawColor(40,40,40,230)
+			-- surface.DrawRect(0, 0, w, h)
 		end
 
-		function results:PerformLayout()
-			if self.Results then
-				local f20 = draw.GetFontHeight("RobotoHUD-20")
-				local f50 = draw.GetFontHeight("RobotoHUD-50")
-				self:SetTall(f20 + f50 + 8)
-			else
-				self:SetTall(0)
-			end
-		end
-
-		menu.CopsList = makeTeamList(menu, 2)
+		menu.CopsList = makeTeamList(bottom, 2)
 		menu.CopsList:Dock(LEFT)
 		menu.CopsList:DockMargin(0, 0, 8, 0)
-		menu.RobbersList = makeTeamList(menu, 3)
+		menu.RobbersList = makeTeamList(bottom, 3)
 		menu.RobbersList:Dock(FILL)
 	end
 end
@@ -312,8 +275,6 @@ function GM:ScoreboardHide()
 		return
 	end
 	if IsValid(menu) then
-		menu.ResultsPanel.Results = nil
-		menu.ResultsPanel:InvalidateLayout()
 		menu:Close()
 	end
 end
