@@ -46,6 +46,8 @@ end
 
 function GM:InitPostEntity() 
 	self:InitPostEntityAndMapCleanup()
+
+	RunConsoleCommand("mp_show_voice_icons", "0")
 end
 
 function GM:InitPostEntityAndMapCleanup() 

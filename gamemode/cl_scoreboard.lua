@@ -54,8 +54,6 @@ local function addPlayerItem(self, mlist, ply, pteam)
 			local col = color_white
 			draw.ShadowText(ply:Ping(), "RobotoHUD-L20", w - 4, 0, col, 2)
 
-			draw.ShadowText(("|"):rep(math.min(10, ply:GetScore())) .. " " .. ply:GetScore(), "RobotoHUD-L20", w / 2, 0, col, 0)
-
 			draw.ShadowText(ply:Nick(), "RobotoHUD-L20", s, 0, col, 0)
 		end
 	end
@@ -191,8 +189,6 @@ local function makeTeamList(parent, pteam)
 	local col = Color(190, 190, 190)
 	function head:Paint(w, h)
 		draw.ShadowText("Name", "RobotoHUD-15", 4, 0, col, 0)
-
-		draw.ShadowText("Score", "RobotoHUD-15", w / 2, 0, col, 0)
 
 		draw.ShadowText("Ping", "RobotoHUD-15", w - 4, 0, col, 2)
 	end

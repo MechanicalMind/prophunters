@@ -291,6 +291,8 @@ end
 
 function GM:HUDShouldDraw(name)
 	if name == "CHudHealth" then return false end
+	if name == "CHudVoiceStatus" then return false end
+	if name == "CHudVoiceSelfStatus" then return false end
 	-- if name == "CHudAmmo" then return false end
 	if name == "CHudChat" then
 		if IsValid(self.EndRoundPanel) && self.EndRoundPanel:IsVisible() then
