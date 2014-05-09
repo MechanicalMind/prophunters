@@ -37,7 +37,8 @@ util.AddNetworkString("mb_openhelpmenu")
 util.AddNetworkString("player_model_sex")
 
 resource.AddFile("resource/fonts/Roboto-Black.ttf")
-
+resource.AddFile("materials/melonbomber/skull.png")
+resource.AddFile("materials/melonbomber/skull_license.txt")
 
 function GM:Initialize() 
 	self.DeathRagdolls = {}

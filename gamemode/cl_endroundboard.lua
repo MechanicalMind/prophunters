@@ -401,7 +401,7 @@ local awards = {
 	},
 	PropDamage = {
 		name = "Angriest Player",
-		desc = "Hunter who shot at props randomly the most"
+		desc = "Hunter who shot at props the most"
 	}
 }
 
