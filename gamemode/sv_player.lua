@@ -440,3 +440,17 @@ function GM:StartCommand(ply, cmd)
 		self:BotMove(ply, cmd)
 	end
 end
+
+local sv_alltalk = GetConVar( "sv_alltalk" )
+function GM:PlayerCanHearPlayersVoice( pListener, pTalker )
+	if self:GetGameState() == 3 || self:GetGameState() == 0 then
+		return true
+	end
+	
+	local alltalk = sv_alltalk:GetInt()
+	if ( alltalk >= 1 ) then return true, alltalk >= 2 end
+
+
+	return pListener:Team() == pTalker:Team(), false
+	
+end

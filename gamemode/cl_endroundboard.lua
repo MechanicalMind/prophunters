@@ -37,7 +37,8 @@ local function addPlayerItem(self, mlist, ply)
 				render.SetScissorRect(x, y, x + s + 32 * (0.5 + v / 2), y + h, true)
 
 				// draw mute icon
-				surface.SetDrawColor(255, 255, 255, 255 * math.Clamp(v, 0.1, 1))
+				surface.SetDrawColor(255, 255, 255, 255)
+				-- surface.SetDrawColor(255, 255, 255, 255 * math.Clamp(v, 0.1, 1))
 				surface.DrawTexturedRect(s, h / 2 - 16, 32, 32)
 				s = s + 32 + 4
 

@@ -25,8 +25,7 @@ end
 function GM:GetFallDamage( ply, vel )
 	if vel > 530 then
 		local minvel = vel - 530
-		local dmg = math.ceil(minvel / 278 * 115) + 30
-		dmg = dmg
+		local dmg = math.ceil(minvel / 278 * 115)
 		return dmg
 	end
 end

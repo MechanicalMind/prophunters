@@ -1,4 +1,4 @@
-GM.Name 	= "Codename Bluesubmarine"
+GM.Name 	= "Prophunters"
 GM.Author 	= "MechanicalMind"
 // Credits to waddlesworth for the logo and icon
 GM.Email 	= ""

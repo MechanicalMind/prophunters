@@ -1,7 +1,7 @@
 "Gamemode"
 {
 	"base"		"base"
-	"title"		"Codename Bluesubmarine"
+	"title"		"Prophunters"
 	"maps"		"^ph_"
 	"menusystem"	"1"
 	"version" 	"0.0.2"
