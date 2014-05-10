@@ -25,19 +25,17 @@ local function fillList(mlist, taunts)
 		if t.team && LocalPlayer():Team() != t.team then
 			continue
 		end
+		local z = tonumber(util.CRC(t.name):sub(1, 8))
 		local but = vgui.Create("DButton")
 		but:SetTall(draw.GetFontHeight("RobotoHUD-L15") * 1.0)
 		but:SetText("")
 		function but:Paint(w, h)
-			local col = Color(150, 150, 150)
+			local col = Color(255, 255, 255)
 			if self:IsDown() then
 				colMul(col, 0.5)
 			elseif self:IsHovered() then
-				colMul(col, 1.4)
+				colMul(col, 0.8)
 			end
-			-- draw.RoundedBox(4, 0, 0, w, h, col)
-		
-
 			draw.ShadowText(t.name, "RobotoHUD-L15", 0, h / 2, col, 0, 1)
 			draw.ShadowText(math.Round(t.soundDuration * 10) / 10 .. "s", "RobotoHUD-L10", w, h / 2, col, 2, 1)
 		end
@@ -51,6 +49,8 @@ end
 
 local function addCat(clist, name, taunts, mlist)
 	local z = tonumber(util.CRC(name):sub(1, 8))
+	local dname = name:lower():gsub("[_]", " ")
+	dname = dname:sub(1, 1):upper() .. dname:sub(2)
 
 	local but = vgui.Create("DButton")
 	but:SetTall(draw.GetFontHeight("RobotoHUD-15") * 1.3)
@@ -58,19 +58,21 @@ local function addCat(clist, name, taunts, mlist)
 	but.Selected = false
 	function but:Paint(w, h)
 		local col = Color(68, 68, 68, 160)
-		-- if self:IsDown() then
-		-- 	colMul(col, 0.5)
-		-- elseif self:IsHovered() then
-		-- 	colMul(col, 1.2)
-		-- end
-
+		local colt = Color(190, 190, 190)
 		if !self.Selected then
 			colMul(col, 0.7)
+			if self:IsDown() then
+				colMul(colt, 0.5)
+			elseif self:IsHovered() then
+				colMul(colt, 1.2)
+			end
+		else
+			colMul(colt, 1.2)
 		end
 
 		draw.RoundedBoxEx(4, 0, 0, w, h, col, true, false, true, false)
 
-		draw.ShadowText(name, "RobotoHUD-15", w / 2, h / 2, color_white, 1, 1)
+		draw.ShadowText(dname, "RobotoHUD-15", w / 2, h / 2, colt, 1, 1)
 	end
 	function but:DoClick()
 		fillList(mlist, taunts)
@@ -82,7 +84,7 @@ end
 
 local function fillCats(clist, mlist)
 	clist:Clear()
-	local all = addCat(clist, "All", Taunts, mlist)
+	local all = addCat(clist, "all", Taunts, mlist)
 	for k, taunts in pairs(TauntCategories) do
 		local c = 0
 		for a, t in pairs(taunts) do
