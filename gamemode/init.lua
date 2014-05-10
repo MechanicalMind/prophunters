@@ -136,3 +136,13 @@ function GM:ShowSpare1(ply)
 	net.Start("open_taunt_menu")
 	net.Send(ply)
 end
+
+concommand.Add("ph_version", function (ply)
+	if IsValid(ply) then
+		local t = MsgClients()
+		t:Add("Prophunters by Mechanical Mind version " .. tostring(GAMEMODE.Version or "error") .. "\n")
+		t:Send(ply)
+	else
+		print("Prophunters by Mechanical Mind version " .. tostring(GAMEMODE.Version or "error"))
+	end
+end)

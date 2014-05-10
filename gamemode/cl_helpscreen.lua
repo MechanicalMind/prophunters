@@ -81,7 +81,7 @@ local function openHelpScreen()
 			local tw,th = surface.GetTextSize(t)
 			draw.ShadowText(t, "RobotoHUD-25", 8, 2, Color(132, 199, 29), 0)
 
-			draw.ShadowText("learn about the gamemode", "RobotoHUD-15", 8 + tw + 16, 2 + th * 0.90, Color(220, 220, 220), 0, 4)
+			draw.ShadowText("learn about the gamemode", "RobotoHUD-L15", 8 + tw + 16, 2 + th * 0.90, Color(220, 220, 220), 0, 4)
 		end
 
 		local catlist = vgui.Create("DScrollPanel", menu)

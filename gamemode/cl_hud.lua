@@ -323,7 +323,9 @@ function GM:DrawRoundTimer()
 		local s = math.floor(time % 60)
 		m = tostring(m)
 		s = s < 10 and "0" .. s or tostring(s)
-		draw.ShadowText(m .. ":" .. s, "RobotoHUD-20", ScrW() / 2, 20, color_white, 1, 3)
+		local fh = draw.GetFontHeight("RobotoHUD-L15") * 1
+		draw.ShadowText("Props win in", "RobotoHUD-L15", ScrW() / 2, 20, color_white, 1, 3)
+		draw.ShadowText(m .. ":" .. s, "RobotoHUD-20", ScrW() / 2, fh + 20, color_white, 1, 3)
 	end
 end
 
