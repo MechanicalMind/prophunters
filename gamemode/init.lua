@@ -40,8 +40,8 @@ resource.AddFile("resource/fonts/Roboto-Black.ttf")
 resource.AddFile("materials/melonbomber/skull.png")
 resource.AddFile("materials/melonbomber/skull_license.txt")
 
-GM.VoiceHearTeam = CreateConVar("ph_voice_hearteam", 0, bit.bor(FCVAR_NOTIFY), "Should hear the voices of opposing teams" )
-GM.VoiceHearDead = CreateConVar("ph_voice_heardead", 1, bit.bor(FCVAR_NOTIFY), "Should hear the voices of dead players" )
+GM.VoiceHearTeam = CreateConVar("ph_voice_hearotherteam", 0, bit.bor(FCVAR_NOTIFY), "Can we hear the voices of opposing teams" )
+GM.VoiceHearDead = CreateConVar("ph_voice_heardead", 1, bit.bor(FCVAR_NOTIFY), "Can we hear the voices of dead players and spectators" )
 
 function GM:Initialize() 
 	self.DeathRagdolls = {}

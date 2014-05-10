@@ -460,11 +460,16 @@ function GM:PlayerCanHearPlayersVoice( speaker, talker )
 		return true
 	end
 
+	// spectators can always hear other spectators
+	if speaker:Team() == 1 && talker:Team() == 1 then
+		return true
+	end
+
 	if !speaker:Alive() || speaker:Team() == 1 then
 
 		// can we hear the voices of the dead
 		if !self.VoiceHearDead:GetBool() then
-			return false
+			return !talker:Alive() || talker:Team() == 1
 		end
 	end
 	
