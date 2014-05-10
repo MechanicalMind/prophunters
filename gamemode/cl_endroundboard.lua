@@ -400,7 +400,7 @@ local awards = {
 		desc = "Prop who taunted the most"
 	},
 	FirstHunterKill = {
-		name = "First Bloody",
+		name = "First Blood",
 		desc = "Hunter who had the first kill"
 	},
 	MostKills = {
