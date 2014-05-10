@@ -395,6 +395,14 @@ local awards = {
 		name = "Least Movement",
 		desc = "Prop who moved the least"
 	},
+	MostTaunts = {
+		name = "Most Taunts",
+		desc = "Prop who taunted the most"
+	},
+	FirstHunterKill = {
+		name = "First Bloody",
+		desc = "Hunter who had the first kill"
+	},
 	MostKills = {
 		name = "Most Kills",
 		desc = "Hunter who had the most kills"

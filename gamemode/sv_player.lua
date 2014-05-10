@@ -144,7 +144,11 @@ function GM:DoPlayerDeath(ply, attacker, dmginfo)
 	if ply:IsDisguised() && ply:Team() == 3 then
 		ply:EmitSound("ambient/voices/f_scream1.wav")
 	end
+
+	// are they a prop
 	if ply:Team() == 3 then
+
+		// set the last death award
 		self.LastPropDeath = ply
 	end
 	ply:UnDisguise()
@@ -165,8 +169,17 @@ function GM:DoPlayerDeath(ply, attacker, dmginfo)
 			attacker:AddFrags(-1)
 		else
 			attacker:AddFrags(1)
+
+			// did a hunter kill a prop
 			if attacker:Team() == 2 && ply:Team() == 3 then
+
+				// increase their round kills
 				attacker.HunterKills = attacker.HunterKills + 1
+
+				// set the first hunter kill award
+				if self.FirstHunterKill == nil then
+					self.FirstHunterKill = attacker
+				end
 			end
 		end
 	end

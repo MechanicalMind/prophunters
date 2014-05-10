@@ -29,4 +29,5 @@ concommand.Add("ph_taunt", function (ply, com, args)
 
 	ply:EmitSound(snd)
 	ply.Taunting = CurTime() + SoundDuration(snd) + 0.1
+	ply.TauntAmount = (ply.TauntAmount or 0) + 1
 end)

@@ -115,6 +115,7 @@ end
 function GM:StartRound()
 
 	self.LastPropDeath = nil
+	self.FirstHunterKill = nil
 
 	local hunters, props = 0, 0
 	for k, ply in pairs(self:GetPlayingPlayers()) do
@@ -122,6 +123,7 @@ function GM:StartRound()
 		ply.PropDmgPenalty = 0
 		ply.PropMovement = 0
 		ply.HunterKills = 0
+		ply.TauntAmount = 0
 		if ply:Team() == 2 then
 			hunters = hunters + 1
 		elseif ply:Team() == 3 then
@@ -174,6 +176,7 @@ function GM:EndRound(reason)
 	local propPly, propDmg = nil, 0
 	local killsPly, killsAmo = nil, 0
 	local movePly, moveAmo
+	local tauntsPly, tauntsAmo = nil, 0
 	for k, ply in pairs(self:GetPlayingPlayers()) do
 		if ply:Team() == 2 then // hunters
 
@@ -195,6 +198,12 @@ function GM:EndRound(reason)
 				moveAmo = ply.PropMovement
 				movePly = ply
 			end
+
+			// get prop with most taunts
+			if ply.TauntAmount > tauntsAmo then
+				tauntsAmo = ply.TauntAmount
+				tauntsPly = ply
+			end
 		end
 	end
 
@@ -210,8 +219,18 @@ function GM:EndRound(reason)
 		self.PlayerAwards["MostKills"] = killsPly
 	end
 
+	if tauntsPly then
+		self.PlayerAwards["MostTaunts"] = tauntsPly
+	end
+
+	// last prop death award
 	if IsValid(self.LastPropDeath) && reason == 2 then
 		self.PlayerAwards["LastPropStanding"] = self.LastPropDeath
+	end
+
+	// first hunter kill award
+	if IsValid(self.FirstHunterKill) then
+		self.PlayerAwards["FirstHunterKill"] = self.FirstHunterKill
 	end
 
 	net.Start("round_victor")
