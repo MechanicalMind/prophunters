@@ -100,12 +100,14 @@ function GM:DrawGameHUD()
 
 	local help 
 	if LocalPlayer():Team() == 3 then
-		help = helpKeysProps
+		if self:GetGameState() == 1 || (self:GetGameState() == 2 && !LocalPlayer():IsDisguised()) then
+			help = helpKeysProps
+		end
 	end
 
 
 
-	if help && self:GetGameState() == 1 then
+	if help then
 		local fh = draw.GetFontHeight("RobotoHUD-L15")
 		local w, h = math.ceil(ScrW() * 0.09), #help * fh
 		local x = 20
