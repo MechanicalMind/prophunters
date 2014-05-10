@@ -1,0 +1,35 @@
+Create a file in 
+
+	lua/prophunter/taunts/ 
+
+called
+
+	something.lua
+
+replacing something with a different name (e.g. the name of your addon, your name, etc)
+
+in their list your taunts in the form
+each addTaunt adds one entry to the list which when clicked will randomly play one of the sound files
+
+	addTaunt("name", {
+		"sound1.wav", 
+		"sound2.wav"
+	}, "team", "gender", {"category1", "category2"})
+
+name is the name of your sound
+sound1.wav is the path to your sound file
+team is the team it should belong to (props or hunters)
+gender is the gender of the voice (male, female or both)
+category is the categories the taunt should belong to (all categories should be camelCase and not contain spaces)
+
+examples
+
+	addTaunt("Get the hell out", {
+		"vo/npc/male01/gethellout.wav"
+	}, "props", "male", {"talk"})
+
+	addTaunt("Zombie Growl", {
+		"npc/zombie/zombie_alert1.wav",
+		"npc/zombie/zombie_alert2.wav",
+		"npc/zombie/zombie_alert3.wav"
+	}, "props", "both", {"zombie"})

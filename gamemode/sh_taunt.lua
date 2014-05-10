@@ -1,7 +1,5 @@
 
 
-local rootFolder = (GM or GAMEMODE).Folder:sub(11) .. "/gamemode/"
-
 Taunts = {}
 TauntCategories = {}
 AllowedTauntSounds = {}
@@ -25,6 +23,9 @@ local function addTaunt(name, snd, pteam, sex, cats)
 	end
 	if sex && #sex > 0 then
 		t.sex = sex
+		if sex == "both" then
+			t.sex = nil
+		end
 	end
 	t.name = name
 
@@ -44,13 +45,16 @@ local function addTaunt(name, snd, pteam, sex, cats)
 	end
 end
 
-function GM:LoadTaunts()
-	local tempG = {}
-	tempG.addTaunt = addTaunt
-	local meta = {}
-	meta.__index = _G
-	setmetatable(tempG, meta)
+local tempG = {}
+tempG.addTaunt = addTaunt
 
+// inherit from _G
+local meta = {}
+meta.__index = _G
+meta.__newindex = _G
+setmetatable(tempG, meta)
+
+local function loadTaunts(rootFolder)
 	local files, dirs = file.Find(rootFolder .. "taunts/*", "LUA")
 	for k, v in pairs(files) do
 		AddCSLuaFile(rootFolder .. "taunts/" .. v)
@@ -67,6 +71,11 @@ function GM:LoadTaunts()
 			MsgC(Color(255, 50, 50), "Loading taunts failed " .. name .. ".lua\nError: " .. err .. "\n")
 		end
 	end
+end
+
+function GM:LoadTaunts()
+	loadTaunts((GM or GAMEMODE).Folder:sub(11) .. "/gamemode/")
+	loadTaunts("lua/prophunters/taunts/")
 end
 
 GM:LoadTaunts()
