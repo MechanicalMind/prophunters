@@ -455,15 +455,22 @@ function GM:StartCommand(ply, cmd)
 end
 
 local sv_alltalk = GetConVar( "sv_alltalk" )
-function GM:PlayerCanHearPlayersVoice( pListener, pTalker )
+function GM:PlayerCanHearPlayersVoice( speaker, talker )
 	if self:GetGameState() == 3 || self:GetGameState() == 0 then
 		return true
 	end
-	
-	local alltalk = sv_alltalk:GetInt()
-	if ( alltalk >= 1 ) then return true, alltalk >= 2 end
 
+	if !speaker:Alive() || speaker:Team() == 1 then
 
-	return pListener:Team() == pTalker:Team(), false
+		// can we hear the voices of the dead
+		if !self.VoiceHearDead:GetBool() then
+			return false
+		end
+	end
 	
+	if self.VoiceHearTeam:GetBool() then
+		return true
+	end
+	
+	return speaker:Team() == talker:Team()
 end
