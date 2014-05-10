@@ -34,7 +34,7 @@ end
 -- addHelpText(" - place a line of bombs with right click\n")
 
 addHelpText("Intro", 1, [[
-Prop Hunters is a gamemode based on Prop Hunt, it has less bugs that the original and adds some new features like rotation lock.
+Prop Hunters is a gamemode based on the classic Prop Hunt. I've added better looks, more features and lots of fixes to gameplay.
 
 
 ==CONTROLS==
@@ -46,6 +46,11 @@ The aim of the hunters is to find and kill all the props.
 The aim of the props is to hide from the hunters and not get killed.
 ]])
 
+local function colMul(color, mul)
+	color.r = math.Clamp(math.Round(color.r * mul), 0, 255)
+	color.g = math.Clamp(math.Round(color.g * mul), 0, 255)
+	color.b = math.Clamp(math.Round(color.b * mul), 0, 255)
+end
 
 local menu
 local function openHelpScreen()
@@ -68,11 +73,8 @@ local function openHelpScreen()
 		end
 
 		function menu:Paint(w, h)
-			surface.SetDrawColor(130, 130, 130, 255)
+			surface.SetDrawColor(40,40,40,230)
 			surface.DrawRect(0, 0, w, h)
-
-			surface.SetDrawColor(80, 80, 80, 255)
-			surface.DrawOutlinedRect(0, 0, w, h)
 
 			surface.SetFont("RobotoHUD-25")
 			local t = "Help"
@@ -86,8 +88,6 @@ local function openHelpScreen()
 		catlist:Dock(LEFT)
 		catlist:SetWide(200)
 		function catlist:Paint(w, h)
-			surface.SetDrawColor(150, 150, 150, 255)
-			surface.DrawRect(0, 0, w, h)
 		end
 
 		// child positioning
@@ -98,27 +98,35 @@ local function openHelpScreen()
 			child:DockMargin( 0,0,0,4 )
 		end
 
-		for k, v in pairs(categories) do
-			local font = "RobotoHUD-25"
-			if v.size == 2 then
+		for k, t in pairs(categories) do
+			local font = "RobotoHUD-20"
+			if t.size == 2 then
 				font = "RobotoHUD-15"
 			end
 			local but = vgui.Create("DButton")
 			but:SetText("")
-			but:SetTall(draw.GetFontHeight(font))
+			but:SetTall(draw.GetFontHeight(font) * 1.2)
+			but.Selected = false
 			function but:Paint(w, h)
-				if self.Hovered then
-					surface.SetDrawColor(90, 90, 90, 255)
-					surface.DrawRect(0, 0, w, h)
+				local col = Color(68, 68, 68, 160)
+				local colt = Color(190, 190, 190)
+				if !self.Selected then
+					colMul(col, 0.7)
+					if self:IsDown() then
+						colMul(colt, 0.5)
+					elseif self:IsHovered() then
+						colMul(colt, 1.2)
+					end
+				else
+					colMul(colt, 1.2)
 				end
-				local col = color_white
-				if self:IsDown() then
-					col = Color(150, 150, 150)
-				end
-				draw.SimpleText(v.heading, font, w / 2, h / 2, col, 1, 1)
+
+				draw.RoundedBoxEx(4, 0, 0, w, h, col, true, false, true, false)
+
+				draw.ShadowText(t.heading, font, w / 2, h / 2, colt, 1, 1)
 			end
 			function but:DoClick()
-				menu.TextContent.Text = v.text
+				menu.TextContent.Text = t.text
 				menu.TextContent:InvalidateLayout()
 			end
 			catlist:AddItem(but)
@@ -128,8 +136,11 @@ local function openHelpScreen()
 		local textscroll = vgui.Create("DScrollPanel", menu)
 		textscroll:Dock(FILL)
 		function textscroll:Paint(w, h)
-			surface.SetDrawColor(50, 50, 50, 255)
-			surface.DrawRect(0, 0, w, h)
+			surface.SetDrawColor(68, 68, 68, 160)
+			surface.DrawOutlinedRect(0, 0, w, h)
+
+			surface.SetDrawColor(55, 55, 55, 120)
+			surface.DrawRect(1, 1, w - 2, h - 2)
 		end
 
 		// child positioning
@@ -144,6 +155,7 @@ local function openHelpScreen()
 		menu.TextContent = pnl
 		pnl:SetWide(400)
 		pnl.Text = categories[1].text
+		catlist:GetCanvas():GetChildren()[1].Selected = true
 		textscroll:AddItem(pnl)
 		function pnl:PerformLayout()
 			if self.Text then

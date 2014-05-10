@@ -159,9 +159,6 @@ local function openTauntMenu()
 	menu.TauntList = mlist
 	mlist:Dock(FILL)
 	function mlist:Paint(w, h)
-		surface.SetDrawColor(50, 50, 50)
-		-- surface.DrawRect(0, 0, w, h)
-
 		surface.SetDrawColor(68, 68, 68, 160)
 		surface.DrawOutlinedRect(0, 0, w, h)
 
