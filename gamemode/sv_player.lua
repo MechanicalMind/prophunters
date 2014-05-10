@@ -305,24 +305,13 @@ function GM:PlayerSelectSpawn( pl )
 	local Count = table.Count( spawnPoints )
 
 	if pl:Team() == 1 || Count == 0 then
-		-- (Old) GMod Maps
-		spawnPoints = table.Add( spawnPoints, ents.FindByClass( "gmod_player_start" ) )
-		
-		-- TF Maps
-		spawnPoints = table.Add( spawnPoints, ents.FindByClass( "info_player_teamspawn" ) )
-		
-		-- INS Maps
-		spawnPoints = table.Add( spawnPoints, ents.FindByClass( "ins_spawnpoint" ) )  
-
-		-- AOC Maps
-		spawnPoints = table.Add( spawnPoints, ents.FindByClass( "aoc_spawnpoint" ) )
-
-		-- Dystopia Maps
-		spawnPoints = table.Add( spawnPoints, ents.FindByClass( "dys_spawn_point" ) )
-
-		-- SYN Maps
-		spawnPoints = table.Add( spawnPoints, ents.FindByClass( "info_player_coop" ) )
-
+		spawnPoints = table.Add( spawnPoints, ents.FindByClass( "info_player_start" ) )
+		spawnPoints = table.Add( spawnPoints, ents.FindByClass( "gmod_player_start" ) ) -- (Old) GMod Maps
+		spawnPoints = table.Add( spawnPoints, ents.FindByClass( "info_player_teamspawn" ) ) -- TF Maps
+		spawnPoints = table.Add( spawnPoints, ents.FindByClass( "ins_spawnpoint" ) ) -- INS Maps
+		spawnPoints = table.Add( spawnPoints, ents.FindByClass( "aoc_spawnpoint" ) ) -- AOC Maps
+		spawnPoints = table.Add( spawnPoints, ents.FindByClass( "dys_spawn_point" ) ) -- Dystopia Maps
+		spawnPoints = table.Add( spawnPoints, ents.FindByClass( "info_player_coop" ) ) -- SYN Maps
 		spawnPoints = table.Add( spawnPoints, ents.FindByClass( "info_player_deathmatch" ) )
 	end
 
