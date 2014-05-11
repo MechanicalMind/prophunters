@@ -99,6 +99,18 @@ function GM:LoadMapList()
 		self.MapList = tbl
 		self:SaveMapList()
 	end
+
+	for k, map in pairs(self.MapList) do
+		local path = "maps/" .. map .. ".png"
+		if file.Exists(path, "GAME") then
+			resource.AddSingleFile(path)
+		else
+			local path = "maps/thumb/" .. map .. ".png"
+			if file.Exists(path, "GAME") then
+				resource.AddSingleFile(path)
+			end
+		end
+	end
 end
 
 function GM:StartMapVote()
