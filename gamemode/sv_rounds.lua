@@ -249,7 +249,7 @@ function GM:EndRound(reason)
 	net.WriteUInt(0, 8)
 	net.Broadcast()
 
-	self.RoundSettings.NextRoundTime = 25
+	self.RoundSettings.NextRoundTime = 15
 	self:NetworkGameSettings()
 
 	for k, ply in pairs(self:GetPlayingPlayers()) do
@@ -327,13 +327,15 @@ function GM:RoundsThink()
 		end
 	elseif self:GetGameState() == 3 then
 		if self:GetStateRunningTime() > (self.RoundSettings.NextRoundTime or 30) then
-			if self.Rounds > 5 then
+			if self.Rounds > self.RoundLimit:GetInt() then
 				self:StartMapVote()
 			else
 				self:SwapTeams()
 				self:SetupRound()
 			end
 		end
+	elseif self:GetGameState() == 4 then
+		self:MapVoteThink()
 	end
 end
 

@@ -17,6 +17,10 @@ function GM:PlayerInitialSpawn(ply)
 	end
 
 	self.LastPlayerSpawn = CurTime()
+
+	if self:IsMapVoting() then
+		self:NetworkMapVoteStart(ply)
+	end
 end
 
 function GM:PlayerLoadedLocalPlayer(ply)

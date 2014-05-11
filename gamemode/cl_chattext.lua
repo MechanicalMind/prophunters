@@ -35,9 +35,7 @@ function chat.AddText(...)
 	CachedAddChatText(...)
 end
 
-function GM:ChatText(i, name, text, t)
-	self:EndRoundAddChatText(Color(0, 120, 220), text)
-end
+
 
 function GM:ChatAddText(...)
 	local args = {...}

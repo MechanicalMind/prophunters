@@ -29,7 +29,6 @@ local function fillList(mlist, taunts, cat)
 		if t.team && LocalPlayer():Team() != t.team then
 			continue
 		end
-		local z = tonumber(util.CRC(t.name):sub(1, 8))
 		local but = vgui.Create("DButton")
 		but:SetTall(draw.GetFontHeight("RobotoHUD-L15") * 1.0)
 		but:SetText("")

@@ -509,15 +509,62 @@ function GM:EndRoundMapVote()
 		end
 		local dname = map:gsub("^%a%a%a?_", ""):gsub("_?v[%d%.%-]+$", "")
 		dname = dname:gsub("[_]", " "):gsub("([%a])([%a]+)", function (a, b) return a:upper() .. b end)
-		function but:Paint()
-			draw.SimpleText(dname, "RobotoHUD-20", 128 + 20, 0, color_white, 0)
+		local z = tonumber(util.CRC(dname):sub(1, 8))
+		local mcol = Color(z % 255, z / 255 % 255, z / 255 / 255 % 255, 50)
+		local gray = Color(150, 150, 150)
+
+		but.VotesScroll = 0
+		but.VotesScrollDir = 1
+		function but:Paint(w, h)
+			if self.Hovered then
+				surface.SetDrawColor(50, 50, 50, 50)
+				surface.DrawRect(0, 0, w, h)
+			end
+
+			draw.SimpleText(dname, "RobotoHUD-20", 128 + 20, 20, color_white, 0)
 			local fg = draw.GetFontHeight("RobotoHUD-20")
-			draw.SimpleText(map, "RobotoHUD-L15", 128 + 20, fg, Color(150, 150, 150), 0)
+			draw.SimpleText(map, "RobotoHUD-L15", 128 + 20, 20 + fg, gray, 0)
 			if png then
 				surface.SetMaterial(png)
 				surface.SetDrawColor(255, 255, 255, 255)
 				surface.DrawTexturedRect(0, 0, 128, 128)
+			else
+				surface.SetDrawColor(50, 50, 50, 255)
+				surface.DrawRect(0, 0, 128, 128)
+				surface.SetDrawColor(mcol)
+				surface.DrawRect(20, 20, 128 - 40, 128 - 40)
 			end
+
+			local votes = 0
+			if GAMEMODE.MapVotesByMap[map] then
+				votes = #GAMEMODE.MapVotesByMap[map]
+			end
+
+			local fg2 = draw.GetFontHeight("RobotoHUD-L15")
+			if votes > 0 then
+				draw.SimpleText(votes .. (votes > 1 and " votes" or " vote"), "RobotoHUD-L15", 128 + 20, 20 + fg + 20 + fg2, color_white, 0)
+			end
+
+			local i = 0
+			for ply, map2 in pairs(GAMEMODE.MapVotes) do
+				if IsValid(ply) && map2 == map then
+					draw.SimpleText(ply:Nick(), "RobotoHUD-L15", w, i * fg2 - self.VotesScroll, gray, 2)
+					i = i + 1
+				end
+			end
+
+			if i * fg2 > 128 then
+				self.VotesScroll = self.VotesScroll + FrameTime() * 14 * self.VotesScrollDir
+				if self.VotesScroll > i * fg2 - 128 then
+					self.VotesScrollDir = -1
+				elseif self.VotesScroll < 0 then
+					self.VotesScrollDir = 1
+				end
+			end
+		end
+
+		function but:DoClick()
+			RunConsoleCommand("ph_votemap", map)
 		end
 		menu.MapVoteList:AddItem(but)
 	end

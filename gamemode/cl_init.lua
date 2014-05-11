@@ -158,11 +158,23 @@ net.Receive("player_model_sex", function ()
 end)
 
 function GM:StartChat()
-	-- self:CloseRoundMenu()
 	if IsValid(self.EndRoundPanel) && self.EndRoundPanel:IsVisible() then
-		chat.Close()
+		-- chat.Close()
 
 		self.EndRoundPanel:SetKeyboardInputEnabled(true)
 		self.EndRoundPanel.ChatTextEntry:RequestFocus()
+		return true
 	end
+end
+
+function GM:ChatText(i, name, text, filter)
+	self:EndRoundAddChatText(Color(0, 120, 220), text)
+
+	if ( filter == "chat" ) then
+		Msg( name, ": ", text, "\n" )
+	else
+		Msg( text, "\n" )
+	end
+	
+	return false
 end

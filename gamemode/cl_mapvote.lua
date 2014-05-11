@@ -14,7 +14,11 @@ net.Receive("ph_mapvote", function (len)
 		table.insert(mapList, map)
 	end
 	
+	GAMEMODE.SelfMapVote = nil
+	GAMEMODE.MapVotes = {}
+	GAMEMODE.MapVotesByMap = {}
 	GAMEMODE.MapList = mapList
+	
 	GAMEMODE:EndRoundMapVote()
 end)
 
@@ -29,8 +33,21 @@ net.Receive("ph_mapvotevotes", function (len)
 		local map = net.ReadString()
 		mapVotes[ply] = map
 	end
+
+	GAMEMODE.SelfMapVote = nil
+
+	local byMap = {}
+	for ply, map in pairs(mapVotes) do
+		byMap[map] = byMap[map] or {}
+		table.insert(byMap[map], ply)
+
+		if ply == LocalPlayer() then
+			GAMEMODE.SelfMapVote = map
+		end
+	end
 	
 	GAMEMODE.MapVotes = mapVotes
+	GAMEMODE.MapVotesByMap = byMap
 end)
 
 function GM:GetMapVoteStart()

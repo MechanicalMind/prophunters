@@ -3,6 +3,21 @@
 util.AddNetworkString("ph_mapvote")
 util.AddNetworkString("ph_mapvotevotes")
 
+GM.MapVoteTime = GAMEMODE and GAMEMODE.MapVoteTime or 30
+GM.MapVoteStart = GAMEMODE and GAMEMODE.MapVoteStart or CurTime()
+
+function GM:IsMapVoting()
+	return self.MapVoting
+end
+
+function GM:GetMapVoteStart()
+	return self.MapVoteStart
+end
+
+function GM:GetMapVoteRunningTime()
+	return CurTime() - self.MapVoteStart
+end
+
 function GM:RotateMap()
 	local map = game.GetMap()
 	local index 
@@ -17,13 +32,17 @@ function GM:RotateMap()
 		index = 1
 	end
 	local nextMap = self.MapList[index]
-	print("[Prophunters] Rotate changing map to " .. nextMap)
+	self:ChangeMapTo(map)
+end
+
+function GM:ChangeMapTo(map)
+	print("[Prophunters] Rotate changing map to " .. map)
 	local ct = ChatText()
-	ct:Add(Translator:QuickVar(translate.mapChange, "map", nextMap))
+	ct:Add("Changing map to " .. map)
 	ct:SendAll()
 	hook.Call("OnChangeMap", GAMEMODE)
 	timer.Simple(5, function ()
-		RunConsoleCommand("changelevel", nextMap)
+		RunConsoleCommand("changelevel", map)
 	end)
 end
 
@@ -85,10 +104,57 @@ end
 function GM:StartMapVote()
 	self.MapVoteStart = CurTime()
 	self.MapVoteTime = 30
+	self.MapVoting = true
 	self.MapVotes = {}
+
+	// randomise the order of maps so people choose different ones
+	local maps = {}
+	for k, v in pairs(self.MapList) do
+		table.insert(maps, math.random(#maps) + 1, v)
+	end
+	self.MapList = maps
+
+	// make bots vote for a map
+	-- for k, ply in pairs(player.GetAll()) do
+	-- 	if ply:IsBot() then
+	-- 		self.MapVotes[ply] = maps[math.random(#maps)]
+	-- 	end
+	-- end
 
 	self:SetGameState(4)
 	self:NetworkMapVoteStart()
+end
+
+function GM:MapVoteThink()
+	if self.MapVoting then
+		if self:GetMapVoteRunningTime() >= self.MapVoteTime then
+			self.MapVoting = false
+			local votes = {}
+			for ply, map in pairs(self.MapVotes) do
+				if IsValid(ply) && ply:IsPlayer() then
+					votes[map] = (votes[map] or 0) + 1
+				end
+			end
+
+			local map, maxvotes = nil, 0
+			for k, v in pairs(votes) do
+				if v > maxvotes then
+					map = k
+					maxvotes = v
+				end
+			end
+
+			if map then
+				self:ChangeMapTo(map)
+			else
+				local ct = ChatText()
+				ct:Add("Map change failed, not enough votes")
+				ct:SendAll()
+				print("Map change failed, not enough votes")
+				self:SetGameState(0)
+			end
+		end
+	end
 end
 
 function GM:NetworkMapVoteStart(ply)
@@ -129,3 +195,26 @@ function GM:NetworkMapVotes(ply)
 		net.Broadcast()
 	end
 end
+
+concommand.Add("ph_votemap", function (ply, com, args)
+	if GAMEMODE.MapVoting then
+		if #args < 1 then
+			return
+		end
+
+		local found
+		for k, v in pairs(GAMEMODE.MapList) do
+			if v:lower() == args[1]:lower() then
+				found = v
+				break
+			end
+		end
+		if !found then
+			ply:ChatPrint("Invalid map " .. args[1])
+			return
+		end
+
+		GAMEMODE.MapVotes[ply] = found
+		GAMEMODE:NetworkMapVotes()
+	end
+end)
