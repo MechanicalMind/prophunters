@@ -129,6 +129,7 @@ function GM:OpenEndRoundMenu()
 	end
 
 	menu = vgui.Create("DFrame")
+	menu:ParentToHUD()
 	GAMEMODE.EndRoundPanel = menu
 	menu:SetSize(ScrW() * 0.95, ScrH() * 0.95)
 	menu:Center()
@@ -258,6 +259,7 @@ function GM:OpenEndRoundMenu()
 	say:SizeToContentsX()
 
 	entry:Dock(FILL)
+	menu.ChatTextEntry = entry
 	entry:SetFont("RobotoHUD-15")
 	entry:SetTextColor(color_white)
 	function entry:OnEnter(...)
@@ -526,4 +528,10 @@ function GM:EndRoundAddChatText(...)
 		end
 	end
 	menu.ChatList:AddItem(pnl)
+end
+
+function GM:CloseRoundMenu()
+	if IsValid(menu) then
+		menu:SetVisible(false)
+	end
 end
