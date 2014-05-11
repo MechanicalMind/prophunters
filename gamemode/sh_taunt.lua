@@ -55,12 +55,12 @@ meta.__newindex = _G
 setmetatable(tempG, meta)
 
 local function loadTaunts(rootFolder)
-	local files, dirs = file.Find(rootFolder .. "taunts/*", "LUA")
+	local files, dirs = file.Find(rootFolder .. "*", "LUA")
 	for k, v in pairs(files) do
-		AddCSLuaFile(rootFolder .. "taunts/" .. v)
+		AddCSLuaFile(rootFolder .. v)
 
 		local name = v:sub(1, -5)
-		local f = CompileFile(rootFolder .. "taunts/" .. v)
+		local f = CompileFile(rootFolder .. v)
 		if !f then
 			return
 		end
@@ -74,7 +74,7 @@ local function loadTaunts(rootFolder)
 end
 
 function GM:LoadTaunts()
-	loadTaunts((GM or GAMEMODE).Folder:sub(11) .. "/gamemode/")
+	loadTaunts((GM or GAMEMODE).Folder:sub(11) .. "/gamemode/taunts/")
 	loadTaunts("lua/prophunters/taunts/")
 end
 

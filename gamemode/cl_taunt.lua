@@ -12,10 +12,14 @@ local function colMul(color, mul)
 	color.b = math.Clamp(math.Round(color.b * mul), 0, 255)
 end
 
-local function fillList(mlist, taunts)
+local function fillList(mlist, taunts, cat)
 	menu.CurrentTaunts = taunts
+	menu.CurrentTauntCat = cat
 	for k, v in pairs(menu.CatList:GetCanvas():GetChildren()) do
 		v.Selected = false
+		if v.CatName == cat then
+			v.Selected = true
+		end
 	end
 	mlist:Clear()
 	for k, t in pairs(taunts) do
@@ -56,6 +60,7 @@ local function addCat(clist, name, taunts, mlist)
 	but:SetTall(draw.GetFontHeight("RobotoHUD-15") * 1.3)
 	but:SetText("")
 	but.Selected = false
+	but.CatName = name
 	function but:Paint(w, h)
 		local col = Color(68, 68, 68, 160)
 		local colt = Color(190, 190, 190)
@@ -75,7 +80,7 @@ local function addCat(clist, name, taunts, mlist)
 		draw.ShadowText(dname, "RobotoHUD-15", w / 2, h / 2, colt, 1, 1)
 	end
 	function but:DoClick()
-		fillList(mlist, taunts)
+		fillList(mlist, taunts, name)
 		self.Selected = true
 	end
 	clist:AddItem(but)
@@ -102,8 +107,8 @@ end
 
 local function openTauntMenu()
 	if IsValid(menu) then
-		fillList(menu.TauntList, menu.CurrentTaunts)
 		fillCats(menu.CatList, menu.TauntList)
+		fillList(menu.TauntList, menu.CurrentTaunts, menu.CurrentTauntCat)
 		menu:SetVisible(!menu:IsVisible())
 		return
 	end
