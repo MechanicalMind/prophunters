@@ -30,13 +30,13 @@ include("sv_bot.lua")
 include("sv_disguise.lua")
 include("sv_teams.lua")
 include("sv_taunt.lua")
+include("sv_mapvote.lua")
 
 
 util.AddNetworkString("clientIPE")
 util.AddNetworkString("mb_openhelpmenu")
 util.AddNetworkString("player_model_sex")
 
-resource.AddFile("resource/fonts/Roboto-Black.ttf")
 resource.AddFile("materials/melonbomber/skull.png")
 resource.AddFile("materials/melonbomber/skull_license.txt")
 
@@ -46,6 +46,7 @@ GM.VoiceHearDead = CreateConVar("ph_voice_heardead", 1, bit.bor(FCVAR_NOTIFY), "
 function GM:Initialize() 
 	self.DeathRagdolls = {}
 	self:SetupStatisticsTables()
+	self:LoadMapList()
 end
 
 function GM:InitPostEntity() 

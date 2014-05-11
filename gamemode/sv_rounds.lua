@@ -13,6 +13,7 @@ GM.Rounds = GAMEMODE and GAMEMODE.Rounds or 0
 // 1 STARTING ROUND
 // 2 PLAYING
 // 3 END GAME RESET TIME
+// 4 MAP VOTE
 
 function GM:GetGameState()
 	return self.GameState
@@ -326,8 +327,12 @@ function GM:RoundsThink()
 		end
 	elseif self:GetGameState() == 3 then
 		if self:GetStateRunningTime() > (self.RoundSettings.NextRoundTime or 30) then
-			self:SwapTeams()
-			self:SetupRound()
+			if self.Rounds > 5 then
+				self:StartMapVote()
+			else
+				self:SwapTeams()
+				self:SetupRound()
+			end
 		end
 	end
 end

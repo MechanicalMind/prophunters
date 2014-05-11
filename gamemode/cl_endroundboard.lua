@@ -315,6 +315,7 @@ function GM:OpenEndRoundMenu()
 
 	// results section
 	local respnl = vgui.Create("DPanel", menu)
+	menu.ResultsPanel = respnl
 	respnl:Dock(FILL)
 	respnl:DockMargin(20, 0, 0, 0)
 	respnl:DockPadding(0, 0, 0, 0)
@@ -360,7 +361,6 @@ function GM:OpenEndRoundMenu()
 	function mlist:Paint(w, h)
 	end
 
-	// child positioning
 	local canvas = mlist:GetCanvas()
 	canvas:DockPadding(0, 0, 0, 0)
 	function canvas:OnChildAdded( child )
@@ -368,16 +368,51 @@ function GM:OpenEndRoundMenu()
 		child:DockMargin(0, 0, 0, 16)
 	end
 
-	-- self:EndRoundMenuResults({
-	-- 	reason = 1,
-	-- 	playerAwards = {
-	-- 		PropDamage = {
-	-- 			player = Entity(1),
-	-- 			name = "Mechanical Mind",
-	-- 			color = team.GetColor(2)
-	-- 		}
-	-- 	}
-	-- })
+	// map vote
+	local votepnl = vgui.Create("DPanel", menu)
+	votepnl:SetVisible(false)
+	menu.VotePanel = votepnl
+	votepnl:Dock(FILL)
+	votepnl:DockMargin(20, 0, 0, 0)
+	votepnl:DockPadding(0, 0, 0, 0)
+	function votepnl:Paint(w, h)
+		surface.SetDrawColor(20, 20, 20, 150)
+		local t = draw.GetFontHeight("RobotoHUD-25") + 2
+		surface.DrawRect(0, t, w, h - t)
+	end
+
+	local header = vgui.Create("DLabel", votepnl)
+	header:Dock(TOP)
+	header:SetFont("RobotoHUD-25")
+	header:SetTall(draw.GetFontHeight("RobotoHUD-25"))
+	header:SetText("Map voting")
+	header:DockMargin(4, 2, 4, 2)
+
+	local timeleft = vgui.Create("DPanel", votepnl)
+	timeleft:Dock(BOTTOM)
+	timeleft:SetTall(draw.GetFontHeight("RobotoHUD-20"))
+	local col = Color(150, 150, 150)
+	function timeleft:Paint(w, h)
+		if GAMEMODE:GetGameState() == 4 then
+			local voteTime = GAMEMODE.MapVoteTime or 30
+			local time = math.max(0, voteTime - GAMEMODE:GetMapVoteRunningTime())
+			draw.SimpleText("Voting ends in " .. math.ceil(time), "RobotoHUD-20", w - 4, 0, col, 2)
+		end
+	end
+
+	local mlist = vgui.Create("DScrollPanel", votepnl)
+	menu.MapVoteList = mlist
+	mlist:Dock(FILL)
+	mlist:DockMargin(20, 0, 20, 0)
+	function mlist:Paint(w, h)
+	end
+
+	local canvas = mlist:GetCanvas()
+	canvas:DockPadding(0, 0, 0, 0)
+	function canvas:OnChildAdded( child )
+		child:Dock(TOP)
+		child:DockMargin(0, 0, 0, 16)
+	end
 end
 
 function GM:CloseEndRoundMenu()
@@ -415,6 +450,9 @@ local awards = {
 
 function GM:EndRoundMenuResults(res)
 	self:OpenEndRoundMenu()
+	menu.ResultsPanel:SetVisible(true)
+	menu.VotePanel:SetVisible(false)
+
 	menu.Results = res
 	menu.ChatList:Clear()
 	menu.ResultList:Clear()
@@ -442,6 +480,25 @@ function GM:EndRoundMenuResults(res)
 
 			menu.ResultList:AddItem(pnl)
 		end
+	end
+end
+
+function GM:EndRoundMapVote()
+	self:OpenEndRoundMenu()
+
+	menu.ResultsPanel:SetVisible(false)
+	menu.VotePanel:SetVisible(true)
+
+	menu.MapVoteList:Clear()
+
+	for k, map in pairs(self.MapList) do
+		local but = vgui.Create("DButton")
+		but:SetText("")
+		but:SetTall(40)
+		function but:Paint()
+			draw.SimpleText(map, "RobotoHUD-20", 0, 0, color_white, 0)
+		end
+		menu.MapVoteList:AddItem(but)
 	end
 end
 
