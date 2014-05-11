@@ -405,12 +405,12 @@ function GM:OpenEndRoundMenu()
 	local mlist = vgui.Create("DScrollPanel", votepnl)
 	menu.MapVoteList = mlist
 	mlist:Dock(FILL)
-	mlist:DockMargin(20, 0, 20, 0)
+	mlist:DockMargin(0, 20, 0, 20)
 	function mlist:Paint(w, h)
 	end
 
 	local canvas = mlist:GetCanvas()
-	canvas:DockPadding(0, 0, 0, 0)
+	canvas:DockPadding(20, 0, 20, 0)
 	function canvas:OnChildAdded( child )
 		child:Dock(TOP)
 		child:DockMargin(0, 0, 0, 16)
@@ -496,9 +496,28 @@ function GM:EndRoundMapVote()
 	for k, map in pairs(self.MapList) do
 		local but = vgui.Create("DButton")
 		but:SetText("")
-		but:SetTall(40)
+		but:SetTall(128)
+		local png
+		local path = "maps/" .. map .. ".png"
+		if file.Exists(path, "GAME") then
+			png = Material(path, "noclamp")
+		else
+			local path = "maps/thumb/" .. map .. ".png"
+			if file.Exists(path, "GAME") then
+				png = Material(path, "noclamp")
+			end
+		end
+		local dname = map:gsub("^%a%a%a?_", ""):gsub("_?v[%d%.%-]+$", "")
+		dname = dname:gsub("[_]", " "):gsub("([%a])([%a]+)", function (a, b) return a:upper() .. b end)
 		function but:Paint()
-			draw.SimpleText(map, "RobotoHUD-20", 0, 0, color_white, 0)
+			draw.SimpleText(dname, "RobotoHUD-20", 128 + 20, 0, color_white, 0)
+			local fg = draw.GetFontHeight("RobotoHUD-20")
+			draw.SimpleText(map, "RobotoHUD-L15", 128 + 20, fg, Color(150, 150, 150), 0)
+			if png then
+				surface.SetMaterial(png)
+				surface.SetDrawColor(255, 255, 255, 255)
+				surface.DrawTexturedRect(0, 0, 128, 128)
+			end
 		end
 		menu.MapVoteList:AddItem(but)
 	end

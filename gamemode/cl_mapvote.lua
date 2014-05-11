@@ -15,7 +15,6 @@ net.Receive("ph_mapvote", function (len)
 	end
 	
 	GAMEMODE.MapList = mapList
-	print(50)
 	GAMEMODE:EndRoundMapVote()
 end)
 
