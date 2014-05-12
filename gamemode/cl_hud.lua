@@ -221,7 +221,9 @@ function GM:DrawHealth(ply)
 	local maxhealth = math.max(health, ply:GetHMaxHealth())
 
 	local nh = math.Round((h - ps * 2) * math.Clamp(health / maxhealth, 0, 1))
-	surface.SetDrawColor(0, 150, 220, 150)
+	local tcol = table.Copy(team.GetColor(ply:Team()))
+	tcol.a = 150
+	surface.SetDrawColor(tcol)
 	surface.DrawRect(x, y + h - ps - nh, w, nh)
 
 	draw.ShadowText(math.Round(health) .. "", "RobotoHUD-25", x + w / 2, y + h / 2, color_white, 1, 1)
