@@ -109,8 +109,9 @@ function GM:SetupRound()
 	end
 	self:CleanupMap()
 	
-	self:SetGameState(1)
 	self.Rounds = self.Rounds + 1
+	hook.Call("OnSetupRound")
+	self:SetGameState(1)
 end
 
 function GM:StartRound()
@@ -144,6 +145,7 @@ function GM:StartRound()
 	print("Round time is " .. (self.RoundSettings.RoundTime / 60) .. " (" .. c .. " props)")
 
 	self:NetworkGameSettings()
+	hook.Call("OnStartRound")
 	self:SetGameState(2)
 
 	local ct = ChatText()
@@ -258,6 +260,7 @@ function GM:EndRound(reason)
 		end
 	end
 	self:AddRoundStatistic(self:GetStateRunningTime(), #self:GetPlayingPlayers())
+	hook.Call("OnEndRound", self.Rounds)
 	self:SetGameState(3)
 end
 
