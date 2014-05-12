@@ -472,3 +472,12 @@ function GM:PlayerCanHearPlayersVoice( speaker, talker )
 	
 	return speaker:Team() == talker:Team()
 end
+
+function GM:PlayerCanPickupWeapon(ply, wep)
+	if IsValid(wep) then
+		if ply:Team() == 3 then
+			return false
+		end
+	end
+	return true
+end
