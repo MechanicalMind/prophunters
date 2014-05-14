@@ -330,7 +330,7 @@ function GM:RoundsThink()
 		end
 	elseif self:GetGameState() == 3 then
 		if self:GetStateRunningTime() > (self.RoundSettings.NextRoundTime or 30) then
-			if self.Rounds > self.RoundLimit:GetInt() then
+			if self.RoundLimit:GetInt() > 0 && self.Rounds > self.RoundLimit:GetInt() then
 				self:StartMapVote()
 			else
 				self:SwapTeams()
