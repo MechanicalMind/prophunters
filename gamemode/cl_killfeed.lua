@@ -28,7 +28,11 @@ net.Receive("kill_feed_add", function (len)
 		t.messageSelf = "fell to their death"
 	end
 	if bit.band(damageType, DMG_BULLET) == DMG_BULLET then
-		t.message = "shot"
+		t.message = table.Random({
+			"shot",
+			"fed lead to",
+			"swiss cheesed"
+		})
 		t.messageSelf = "shot themself"
 	end
 	if bit.band(damageType, DMG_BURN) == DMG_BURN then
@@ -39,15 +43,19 @@ net.Receive("kill_feed_add", function (len)
 		t.message = "threw a prop at"
 		t.messageSelf = "was crushed to death"
 	end
-	if !t.messageSelf then
-		local msgs = {
+	if bit.band(damageType, DMG_BUCKSHOT) == DMG_BUCKSHOT then
+		t.message = table.Random({
+			"peppered with bucket",
+			"shotgunned",
+		})
+	end
+	if damageType == 0 then
+		t.messageSelf = table.Random({
 			"fell over",
 			"tripped",
 			"couldn't take it",
-			"insulted Garry",
 			"killed themself"
-		}
-		t.messageSelf = table.Random(msgs)
+		})
 	end
 	if IsValid(attacker) && attacker:IsPlayer() && attacker != ply then
 		t.attackerName = attacker:Nick()
