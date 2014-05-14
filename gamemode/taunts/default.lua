@@ -124,3 +124,7 @@ addTaunt("Drop Plates", {
 	"ambient/materials/platedrop2.wav",
 	"ambient/materials/platedrop3.wav"
 }, "props", nil, {"noise"})
+
+addTaunt("Radio", {
+	"music/radio1.mp3"
+}, "props", nil, {"music"}, 39)

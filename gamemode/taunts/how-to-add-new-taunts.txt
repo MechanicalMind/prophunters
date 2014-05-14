@@ -14,13 +14,14 @@ each addTaunt adds one entry to the list which when clicked will randomly play o
 	addTaunt("name", {
 		"sound1.wav", 
 		"sound2.wav"
-	}, "team", "gender", {"category1", "category2"})
+	}, "team", "gender", {"category1", "category2"}, durationOverride)
 
 name is the name of your sound
 sound1.wav is the path to your sound file
 team is the team it should belong to (props or hunters)
 gender is the gender of the voice (male, female or both)
 category is the categories the taunt should belong to (all categories should be camelCase and not contain spaces)
+durationOverride is the length the taunt goes for (you must specify this for mp3)
 
 examples
 
@@ -33,3 +34,8 @@ examples
 		"npc/zombie/zombie_alert2.wav",
 		"npc/zombie/zombie_alert3.wav"
 	}, "props", "both", {"zombie"})
+
+	
+	addTaunt("Radio", {
+		"music/radio1.mp3"
+	}, "props", nil, {"music"}, 39)

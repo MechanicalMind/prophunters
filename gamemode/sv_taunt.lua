@@ -27,7 +27,12 @@ concommand.Add("ph_taunt", function (ply, com, args)
 		return
 	end
 
+	local duration = SoundDuration(snd)
+	if snd:match("%.mp3$") then
+		duration = t.soundDurationOverride or 1
+	end
+
 	ply:EmitSound(snd)
-	ply.Taunting = CurTime() + SoundDuration(snd) + 0.1
+	ply.Taunting = CurTime() + duration + 0.1
 	ply.TauntAmount = (ply.TauntAmount or 0) + 1
 end)

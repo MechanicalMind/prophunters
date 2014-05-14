@@ -4,7 +4,7 @@ Taunts = {}
 TauntCategories = {}
 AllowedTauntSounds = {}
 
-local function addTaunt(name, snd, pteam, sex, cats)
+local function addTaunt(name, snd, pteam, sex, cats, duration)
 	if type(snd) != "table" then snd = {snd} end
 	if #snd == 0 then error("No sounds for " .. name) return end
 
@@ -37,6 +37,10 @@ local function addTaunt(name, snd, pteam, sex, cats)
 	end
 
 	t.soundDuration = dur / count
+	if tonumber(duration) then
+		t.soundDuration = tonumber(duration)
+		t.soundDurationOverride = tonumber(duration)
+	end
 
 	table.insert(Taunts, t)
 	for k, cat in pairs(cats) do
