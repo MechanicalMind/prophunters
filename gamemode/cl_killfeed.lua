@@ -45,7 +45,7 @@ net.Receive("kill_feed_add", function (len)
 	end
 	if bit.band(damageType, DMG_BUCKSHOT) == DMG_BUCKSHOT then
 		t.message = table.Random({
-			"peppered with bucket",
+			"peppered with buckshot",
 			"shotgunned",
 		})
 	end
