@@ -36,6 +36,11 @@ function GM:RotateMap()
 end
 
 function GM:ChangeMapTo(map)
+	if map == game.GetMap() then
+		self.Rounds = 0
+		self:SetGameState(0)
+		return
+	end
 	print("[Prophunters] Rotate changing map to " .. map)
 	local ct = ChatText()
 	ct:Add("Changing map to " .. map)
@@ -148,16 +153,22 @@ function GM:MapVoteThink()
 				end
 			end
 
-			local map, maxvotes = nil, 0
+			local maxvotes = 0
 			for k, v in pairs(votes) do
 				if v > maxvotes then
-					map = k
 					maxvotes = v
 				end
 			end
 
-			if map then
-				self:ChangeMapTo(map)
+			local maps = {}
+			for k, v in pairs(votes) do
+				if v == maxvotes then
+					table.insert(maps, k)
+				end
+			end
+
+			if #maps > 0 then
+				self:ChangeMapTo(table.Random(maps))
 			else
 				local ct = ChatText()
 				ct:Add("Map change failed, not enough votes")
