@@ -1,15 +1,10 @@
 
 util.AddNetworkString("kill_feed_add")
 
-function GM:AddKillFeed(ply, inflictor, attacker)
+function GM:AddKillFeed(ply, attacker, dmginfo)
 	net.Start("kill_feed_add")
 	net.WriteEntity(ply)
-	net.WriteEntity(inflictor)
 	net.WriteEntity(attacker)
-	if ply.LastDamageInfo then
-		net.WriteUInt(ply.LastDamageInfo:GetDamageType(), 32)
-	else
-		net.WriteUInt(0, 32)
-	end
+	net.WriteUInt(dmginfo:GetDamageType(), 32)
 	net.Broadcast()
 end

@@ -96,7 +96,6 @@ function GM:OnStartRound()
 end
 
 function GM:EntityTakeDamage( ent, dmginfo )
-	ent.LastDamageInfo = dmginfo
 	if IsValid(ent) then
 		if ent:IsPlayer() then
 			if IsValid(dmginfo:GetAttacker()) then

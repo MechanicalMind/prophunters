@@ -12,8 +12,8 @@ surface.CreateFont( "ScoreboardPlayer" , {
 	italic = false
 })
 
-local muted = Material("icon32/muted.png")
-local skull = Material("melonbomber/skull.png")
+local muted = Material("icon32/muted.png", "noclamp")
+local skull = Material("melonbomber/skull.png", "noclamp")
 
 local function addPlayerItem(self, mlist, ply, pteam)
 

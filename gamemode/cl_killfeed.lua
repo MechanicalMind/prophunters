@@ -3,10 +3,17 @@ GM.KillFeed = {}
 
 net.Receive("kill_feed_add", function (len)
 	local ply = net.ReadEntity()
-	local inflictor = net.ReadEntity()
 	local attacker = net.ReadEntity()
 	local damageType = net.ReadUInt(32)
 	if !IsValid(ply) then return end
+	-- print(ply, attacker, damageType)
+	-- if damageType != 0 then
+	-- 	local i = 1
+	-- 	for c = 1, 30 do
+	-- 		i = i * 2
+	-- 		print(i, "", bit.band(damageType, i))
+	-- 	end
+	-- end
 
 	local t = {}
 	t.time = CurTime()
@@ -14,18 +21,41 @@ net.Receive("kill_feed_add", function (len)
 	t.playerName = ply:Nick()
 	local col = ply:GetPlayerColor()
 	t.playerColor = Color(col.x * 255, col.y * 255, col.z * 255)
-	t.inflictor = inflictor
 	t.attacker = attacker
 	t.damageType = damageType
+	if bit.band(damageType, DMG_FALL) == DMG_FALL then
+		t.message = "pushed to their death"
+		t.messageSelf = "fell to their death"
+	end
+	if bit.band(damageType, DMG_BULLET) == DMG_BULLET then
+		t.message = "shot"
+		t.messageSelf = "shot themself"
+	end
+	if bit.band(damageType, DMG_BURN) == DMG_BURN then
+		t.message = "burned to death"
+		t.messageSelf = "burned to death"
+	end
+	if bit.band(damageType, DMG_CRUSH) == DMG_CRUSH then
+		t.message = "threw a prop at"
+		t.messageSelf = "was crushed to death"
+	end
+	if !t.messageSelf then
+		local msgs = {
+			"fell over",
+			"tripped",
+			"couldn't take it",
+			"insulted Garry",
+			"killed themself"
+		}
+		t.messageSelf = table.Random(msgs)
+	end
 	if IsValid(attacker) && attacker:IsPlayer() && attacker != ply then
 		t.attackerName = attacker:Nick()
 		local col = attacker:GetPlayerColor()
 		t.attackerColor = Color(col.x * 255, col.y * 255, col.z * 255)
-		Msg(attacker:Nick() .. " killed " .. ply:Nick() .. "\n")
-	elseif damageType == DMG_AIRBOAT then
-		Msg("Death blocks killed " .. ply:Nick() .. "\n")
+		Msg(attacker:Nick() .. " " .. (t.message or "killed") .. " " .. ply:Nick() .. "\n")
 	else
-		Msg(ply:Nick() .. " killed themselves\n")
+		Msg(ply:Nick() .. " " .. (t.messageSelf or "killed themself") .. "\n")
 	end
 
 	table.insert(GAMEMODE.KillFeed, t)
@@ -47,21 +77,14 @@ function GM:DrawKillFeed()
 			local twp, thp = surface.GetTextSize(t.playerName)
 
 			if t.attackerName then
-				local killed = " killed "
+				local killed = " " .. (t.message or "killed") .. " "
 				local twa, tha = surface.GetTextSize(t.attackerName)
 				local twk, thk = surface.GetTextSize(killed)
 				draw.ShadowText(t.attackerName, "RobotoHUD-15", ScrW() - 4 - twp - twk - twa, 4 + down * gap, t.attackerColor, 0)
 				draw.ShadowText(killed, "RobotoHUD-15", ScrW() - 4 - twp - twk, 4 + down * gap, color_white, 0)
 				draw.ShadowText(t.playerName, "RobotoHUD-15", ScrW() - 4 - twp, 4 + down * gap, t.playerColor, 0)
-			elseif t.damageType == DMG_AIRBOAT then
-				local killed = " killed "
-				local twa, tha = surface.GetTextSize("Death blocks")
-				local twk, thk = surface.GetTextSize(killed)
-				draw.ShadowText("Death blocks", "RobotoHUD-15", ScrW() - 4 - twp - twk - twa, 4 + down * gap, Color(220, 30, 30), 0)
-				draw.ShadowText(killed, "RobotoHUD-15", ScrW() - 4 - twp - twk, 4 + down * gap, color_white, 0)
-				draw.ShadowText(t.playerName, "RobotoHUD-15", ScrW() - 4 - twp, 4 + down * gap, t.playerColor, 0)
 			else
-				local killed = " killed themself"
+				local killed = " " .. (t.messageSelf or "killed themself")
 				local twk, thk = surface.GetTextSize(killed)
 
 				draw.ShadowText(killed, "RobotoHUD-15", ScrW() - 4 - twk, 4 + down * gap, color_white, 0)

@@ -144,51 +144,6 @@ function PlayerMeta:CalculateSpeed()
 	self:SetJumpPower(settings.jumpPower or 1)
 end
 
-function GM:DoPlayerDeath(ply, attacker, dmginfo)
-	if ply:IsDisguised() && ply:Team() == 3 then
-		ply:EmitSound("ambient/voices/f_scream1.wav")
-	end
-
-	// are they a prop
-	if ply:Team() == 3 then
-
-		// set the last death award
-		self.LastPropDeath = ply
-	end
-	ply:UnDisguise()
-
-	ply:Freeze(false) // why?, *sigh*
-	
-	ply:CreateRagdoll()
-
-	local ent = ply:GetNWEntity("DeathRagdoll")
-	if IsValid(ent) then
-		ply:CSpectate(OBS_MODE_CHASE, ent)
-	end
-
-	ply:AddDeaths(1)
-
-	if IsValid(attacker) && attacker:IsPlayer() then
-		if attacker == ply then
-			attacker:AddFrags(-1)
-		else
-			attacker:AddFrags(1)
-
-			// did a hunter kill a prop
-			if attacker:Team() == 2 && ply:Team() == 3 then
-
-				// increase their round kills
-				attacker.HunterKills = attacker.HunterKills + 1
-
-				// set the first hunter kill award
-				if self.FirstHunterKill == nil then
-					self.FirstHunterKill = attacker
-				end
-			end
-		end
-	end
-end
-
 function GM:PlayerLoadout(ply)
 	if ply:Team() == 2 then
 		ply:Give("weapon_crowbar")
@@ -365,6 +320,53 @@ function GM:PlayerDeathThink(ply)
 	end
 end
 
+function GM:DoPlayerDeath(ply, attacker, dmginfo)
+	if ply:IsDisguised() && ply:Team() == 3 then
+		ply:EmitSound("ambient/voices/f_scream1.wav")
+	end
+
+	// are they a prop
+	if ply:Team() == 3 then
+
+		// set the last death award
+		self.LastPropDeath = ply
+	end
+	ply:UnDisguise()
+
+	ply:Freeze(false) // why?, *sigh*
+	
+	ply:CreateRagdoll()
+
+	local ent = ply:GetNWEntity("DeathRagdoll")
+	if IsValid(ent) then
+		ply:CSpectate(OBS_MODE_CHASE, ent)
+	end
+
+	ply:AddDeaths(1)
+
+	if IsValid(attacker) && attacker:IsPlayer() then
+		if attacker == ply then
+			attacker:AddFrags(-1)
+		else
+			attacker:AddFrags(1)
+
+			// did a hunter kill a prop
+			if attacker:Team() == 2 && ply:Team() == 3 then
+
+				// increase their round kills
+				attacker.HunterKills = attacker.HunterKills + 1
+
+				// set the first hunter kill award
+				if self.FirstHunterKill == nil then
+					self.FirstHunterKill = attacker
+				end
+			end
+		end
+	end
+
+	self:AddKillFeed(ply, attacker, dmginfo)
+end
+
 function GM:PlayerDeath(ply, inflictor, attacker )
 	self:DoRoundDeaths(ply, attacker)
 
@@ -377,20 +379,6 @@ function GM:PlayerDeath(ply, inflictor, attacker )
 	if IsValid(attacker) && attacker:IsPlayer() && attacker != ply then
 		attacker:AddMoney(100)
 	end
-
-	-- Convert the inflictor to the weapon that they're holding if we can.
-	-- This can be right or wrong with NPCs since combine can be holding a 
-	-- pistol but kill you by hitting you with their arm.
-	if IsValid(inflictor) && inflictor == attacker && (inflictor:IsPlayer() || inflictor:IsNPC()) then
-	
-		inflictor = inflictor:GetActiveWeapon()
-		if ( !IsValid( inflictor ) ) then inflictor = attacker end
-
-	end
-
-	self:RagdollSetDeathDetails(ply, inflictor, attacker)
-
-	self:AddKillFeed(ply, inflictor, attacker)
 end
 
 
