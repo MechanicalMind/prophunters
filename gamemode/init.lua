@@ -31,6 +31,7 @@ include("sv_disguise.lua")
 include("sv_teams.lua")
 include("sv_taunt.lua")
 include("sv_mapvote.lua")
+include("sv_bannedmodels.lua")
 
 
 util.AddNetworkString("clientIPE")
@@ -48,6 +49,7 @@ function GM:Initialize()
 	self.DeathRagdolls = {}
 	self:SetupStatisticsTables()
 	self:LoadMapList()
+	self:LoadBannedModels()
 end
 
 function GM:InitPostEntity() 
