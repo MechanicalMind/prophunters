@@ -179,7 +179,7 @@ local function openTauntMenu()
 	end
 
 	fillList(mlist, Taunts)
-	fillCats(clist, mlist)
+	fillCats(clist, mlist, "all")
 end
 
 concommand.Add("ph_menu_taunt", openTauntMenu)
