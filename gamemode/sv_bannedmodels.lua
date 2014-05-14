@@ -9,6 +9,7 @@ end
 function GM:AddBannedModel(model)
 	table.insert(self.BannedModels, model)
 	self:SaveBannedModels()
+	self:RemoveBannedModelProps()
 end
 
 function GM:RemoveBannedModel(model)
@@ -41,6 +42,22 @@ function GM:LoadBannedModels()
 			table.insert(tbl, map)
 		end
 		self.BannedModels = tbl
+	else
+		self.BannedModels = {
+			"models/props/cs_assault/money.mdl",
+			"models/props/cs_office/computer_mouse.mdl",
+			"models/props/cs_office/projector_remote.mdl"
+		}
+	end
+end
+
+function GM:RemoveBannedModelProps()
+	for k, ent in pairs(ents.GetAll()) do
+		if IsValid(ent) && ent:IsDisguisableAs() then
+			if self:IsModelBanned(ent:GetModel()) then
+				ent:Remove()
+			end
+		end
 	end
 end
 

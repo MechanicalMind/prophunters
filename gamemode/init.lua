@@ -59,6 +59,7 @@ function GM:InitPostEntity()
 end
 
 function GM:InitPostEntityAndMapCleanup() 
+	self:RemoveBannedModelProps()
 	for k, ent in pairs(ents.GetAll()) do
 		if ent:GetClass():find("door") then
 			ent:Fire("unlock","",0)
