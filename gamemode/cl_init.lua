@@ -160,7 +160,7 @@ end)
 
 function GM:StartChat()
 	if IsValid(self.EndRoundPanel) && self.EndRoundPanel:IsVisible() then
-		-- chat.Close()
+		timer.Simple(0, function () chat.Close() end)
 
 		self.EndRoundPanel:SetKeyboardInputEnabled(true)
 		self.EndRoundPanel.ChatTextEntry:RequestFocus()
