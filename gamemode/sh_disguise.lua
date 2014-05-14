@@ -65,7 +65,13 @@ end
 
 function PlayerMeta:GetPropEyeTrace()
 	if !self:IsDisguised() then
-		return self:GetEyeTraceNoCursor()
+		local tr = self:GetEyeTraceNoCursor()
+		local trace = {}
+		trace.start = tr.StartPos
+		trace.endpos = trace.start + self:GetAimVector() * 100000
+		trace.filter = self
+		trace.mask = MASK_SHOT
+		return util.TraceLine(trace)
 	end
 	local maxs = self:GetNWVector("disguiseMaxs")
 	local mins = self:GetNWVector("disguiseMins")
