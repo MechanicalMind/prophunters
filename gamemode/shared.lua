@@ -3,7 +3,7 @@ GM.Author 	= "MechanicalMind"
 // Credits to waddlesworth for the logo and icon
 GM.Email 	= ""
 GM.Website 	= "http://codingconcoctions.com/"
-GM.Version 	= "0.0.5"
+GM.Version 	= "0.0.6"
 
 team.SetUp(1, "Spectators", Color(50, 50, 50))
 team.SetUp(2, "Hunters", Color(255, 150, 50))
