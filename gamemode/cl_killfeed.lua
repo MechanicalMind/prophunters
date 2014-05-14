@@ -49,6 +49,9 @@ net.Receive("kill_feed_add", function (len)
 			"shotgunned",
 		})
 	end
+	if bit.band(damageType, DMG_AIRBOAT) == DMG_AIRBOAT then
+		t.messageSelf = "shot too many props"
+	end
 	if damageType == 0 then
 		t.messageSelf = table.Random({
 			"fell over",

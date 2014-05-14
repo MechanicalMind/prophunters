@@ -112,6 +112,7 @@ function GM:EntityTakeDamage( ent, dmginfo )
 			if IsValid(att) && att:IsPlayer() then
 				local tdmg = DamageInfo()
 				tdmg:SetDamage(math.min(dmginfo:GetDamage(), 3))
+				tdmg:SetDamageType(DMG_AIRBOAT)
 				att:TakeDamageInfo(tdmg)
 
 				// increase stat for end of round (Angriest Hunter)
