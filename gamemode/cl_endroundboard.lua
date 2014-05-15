@@ -467,8 +467,14 @@ function GM:EndRoundMenuResults(res)
 		menu.WinningTeam:SetColor(Color(150, 150, 150))
 	end
 
-	//playerAwards
+	//randomise award order, preserve keys
+	local random = {}
 	for k, award in pairs(awards) do
+		table.insert(random, math.random(#random) + 1, {k, award})
+	end
+
+	for _, v in pairs(random) do
+		local k, award = v[1], v[2]
 		if res.playerAwards[k] then
 			local t = res.playerAwards[k]
 			local pnl = vgui.Create("DPanel")
