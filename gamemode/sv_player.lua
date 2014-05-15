@@ -430,6 +430,7 @@ end
 function GM:StartCommand(ply, cmd)
 	if ply:IsBot() then
 		cmd:SetForwardMove(0)
+		cmd:SetSideMove(0)
 		cmd:SetViewAngles(Angle(0, 0, 0))
 		self:BotMove(ply, cmd)
 	end

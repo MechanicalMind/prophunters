@@ -124,6 +124,7 @@ end)
 function GM:OpenEndRoundMenu()
 	chat.Close()
 	if IsValid(menu) then
+		menu.ChatTextEntry:SetText("")
 		menu:SetVisible(true)
 		return
 	end
