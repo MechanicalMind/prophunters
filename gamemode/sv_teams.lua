@@ -72,7 +72,7 @@ function GM:BalanceTeams(nokill)
 			ct:Add(" team balanced to ")
 			ct:Add(team.GetName(smallerTeam), team.GetColor(smallerTeam))
 			ct:SendAll()
-			diff = diff - 1
+			diff = diff - 2
 		end
 	end
 end

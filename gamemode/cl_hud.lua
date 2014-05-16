@@ -99,9 +99,11 @@ function GM:DrawGameHUD()
 
 
 	local help 
-	if LocalPlayer():Team() == 3 then
-		if self:GetGameState() == 1 || (self:GetGameState() == 2 && !LocalPlayer():IsDisguised()) then
-			help = helpKeysProps
+	if LocalPlayer():Alive() then
+		if LocalPlayer():Team() == 3 then
+			if self:GetGameState() == 1 || (self:GetGameState() == 2 && !LocalPlayer():IsDisguised()) then
+				help = helpKeysProps
+			end
 		end
 	end
 
