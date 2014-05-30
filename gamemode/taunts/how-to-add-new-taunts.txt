@@ -1,6 +1,6 @@
 Create a file in 
 
-	lua/prophunter/taunts/ 
+	lua/prophunters/taunts/ 
 
 called
 
