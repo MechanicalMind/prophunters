@@ -67,6 +67,9 @@ function GM:InitPostEntityAndMapCleanup()
 		if ent:GetClass():find("door") then
 			ent:Fire("unlock","",0)
 		end
+		if ent:IsDisguisableAs() then
+			-- ent:DrawShadow(false)
+		end
 	end
 end
 
@@ -109,16 +112,22 @@ function GM:EntityTakeDamage( ent, dmginfo )
 		end
 		if ent:IsDisguisableAs() then
 			local att = dmginfo:GetAttacker()
-			if IsValid(att) && att:IsPlayer() then
-				local tdmg = DamageInfo()
-				tdmg:SetDamage(math.min(dmginfo:GetDamage(), 3))
-				tdmg:SetDamageType(DMG_AIRBOAT)
-				tdmg:SetAttacker(att)
-				tdmg:SetInflictor(att)
-				att:TakeDamageInfo(tdmg)
+			if IsValid(att) && att:IsPlayer() && att:Team() == 2 then
 
-				// increase stat for end of round (Angriest Hunter)
-				att.PropDmgPenalty = (att.PropDmgPenalty or 0) + tdmg:GetDamage()
+				if bit.band(dmginfo:GetDamageType(), DMG_CRUSH) != DMG_CRUSH then					
+					local tdmg = DamageInfo()
+					tdmg:SetDamage(math.min(dmginfo:GetDamage(), 3))
+					tdmg:SetDamageType(DMG_AIRBOAT)
+
+					-- tdmg:SetAttacker(ent)
+					-- tdmg:SetInflictor(ent)
+
+					tdmg:SetDamageForce(Vector(0, 0, 0))
+					att:TakeDamageInfo(tdmg)
+
+					// increase stat for end of round (Angriest Hunter)
+					att.PropDmgPenalty = (att.PropDmgPenalty or 0) + tdmg:GetDamage()
+				end
 			end
 		end
 	end

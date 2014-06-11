@@ -427,6 +427,14 @@ function GM:PlayerSay( ply, text, team)
 	return true
 end
 
+
+function GM:PlayerCanSeePlayersChat( text, teamOnly, listener, speaker )
+	if !IsValid(speaker) then return false end
+	local canhear = self:PlayerCanHearChatVoice(listener, speaker, "chat") 
+	-- print( canhear, listener, speaker, listener:Alive())
+	return canhear
+end
+
 function GM:StartCommand(ply, cmd)
 	if ply:IsBot() then
 		cmd:SetForwardMove(0)
@@ -436,30 +444,31 @@ function GM:StartCommand(ply, cmd)
 	end
 end
 
+
 local sv_alltalk = GetConVar( "sv_alltalk" )
-function GM:PlayerCanHearPlayersVoice( speaker, talker )
+function GM:PlayerCanHearPlayersVoice( listener, talker ) 
+	if !IsValid(talker) then return false end
+	return self:PlayerCanHearChatVoice(listener, talker, "voice") 
+end
+
+
+function GM:PlayerCanHearChatVoice( listener, talker, typ )
 	if self:GetGameState() == 3 || self:GetGameState() == 0 then
 		return true
 	end
 
-	// spectators can always hear other spectators
-	if speaker:Team() == 1 && talker:Team() == 1 then
+	// spectators and dead players can hear everyone
+	if listener:Team() == 1 || !listener:Alive() then
 		return true
 	end
 
-	if !speaker:Alive() || speaker:Team() == 1 then
+	// if the player is dead or a spectator we can't hear them
+	if !talker:Alive() || talker:Team() == 1 then
+		return false
+	end
 
-		// can we hear the voices of the dead
-		if !self.VoiceHearDead:GetBool() then
-			return !talker:Alive() || talker:Team() == 1
-		end
-	end
-	
-	if self.VoiceHearTeam:GetBool() then
-		return true
-	end
-	
-	return speaker:Team() == talker:Team()
+	return true
+
 end
 
 function GM:PlayerCanPickupWeapon(ply, wep)

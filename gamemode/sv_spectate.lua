@@ -58,7 +58,8 @@ function GM:SpectateNext(ply, direction)
 	local index = 1
 	for k, v in pairs(player.GetAll()) do
 		if v != ply then
-			if v:Alive() then
+			// can only spectate same team and alive
+			if v:Alive() && v:Team() == ply:Team() then
 				table.insert(players, v)
 				if v == ply:GetCSpectatee() then
 					index = #players
