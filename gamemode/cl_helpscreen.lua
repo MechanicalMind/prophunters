@@ -12,26 +12,6 @@ local function addHelpText(heading, size, text, color)
 	table.insert(categories, t)
 end
 
--- addHelpText("Melonbomber is a game where you try to elimate the other players with explosive melons while grabbing upgrades to increase your power\n\n", Color(240, 240, 240))
--- addHelpText("Based on the game Bomberman, Melonbomber brings the same hectic, fast paced gameplay to GMod. Players can place explosive melons and use them to kill other players or destroy wooden crates around the map. Inside the crates can be found powerups that can give you an edge on other players. Having more players increases the fun leading to an unstopabble good time\n\n")
-
--- addHelpText("Powerups include\n", Color(240, 240, 240))
--- addHelpText("Speed Up", Color(0, 150, 255))
--- addHelpText(" - increases your running speed\n")
--- addHelpText("Bomb Up", Color(50,255,50))
--- addHelpText(" - increases the max bombs you can place at a time\n")
--- addHelpText("Power Up", Color(220,50,50))
--- addHelpText(" - increase the length of your bomb's explosions\n")
--- addHelpText("Bomb Kick", Color(250, 100, 0))
--- addHelpText(" - the power to move around bombs\n")
--- addHelpText("Power Bomb", Color(155, 20, 80))
--- addHelpText(" - a incredibly powerful mega bomb\n")
--- addHelpText("Remote Control", Color(220, 190, 0))
--- addHelpText(" - the ability to remotely detonate your bombs\n")
--- addHelpText("Piercing", Color(0, 70, 220))
--- addHelpText(" - bomb explosions pass through breakable crates\n")
--- addHelpText("Line Bomb", Color(150, 0, 180))
--- addHelpText(" - place a line of bombs with right click\n")
 
 addHelpText("Intro", 1, [[
 Prop Hunters is a gamemode based on the classic Prop Hunt. I've added better looks, more features and lots of fixes to gameplay.
@@ -40,6 +20,7 @@ Prop Hunters is a gamemode based on the classic Prop Hunt. I've added better loo
 ==CONTROLS==
 LEFT CLICK - Disguises as the prop you are looking at
 C - Locks your prop's rotation when disguised
+F3 - Taunt
 
 ==OBJECTIVES==
 The aim of the hunters is to find and kill all the props.

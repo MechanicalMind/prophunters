@@ -55,7 +55,8 @@ end
 
 local helpKeysProps = {
 	{"Left", "Disguise as prop"},
-	{"C", "Lock prop rotation"}
+	{"C", "Lock prop rotation"},
+	{"F3", "Taunt"}
 }
 
 
