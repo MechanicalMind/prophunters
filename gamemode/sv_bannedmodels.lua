@@ -43,6 +43,9 @@ function GM:LoadBannedModels()
 		end
 		self.BannedModels = tbl
 	else
+
+		// don't touch this
+		// use ph_bannedmodels_menu or edit data/prophunters/bannedmodels.txt
 		self.BannedModels = {
 			"models/props/cs_assault/money.mdl",
 			"models/props/cs_office/computer_mouse.mdl",
