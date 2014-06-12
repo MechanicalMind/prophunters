@@ -34,6 +34,11 @@ local function addTaunt(name, snd, pteam, sex, cats, duration)
 		AllowedTauntSounds[v] = t
 		dur = dur + SoundDuration(v)
 		count = count + 1
+
+		if SERVER then
+			// network the taunt
+			resource.AddFile("sound/" .. v)
+		end
 	end
 
 	t.soundDuration = dur / count
