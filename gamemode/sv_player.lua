@@ -431,7 +431,6 @@ end
 function GM:PlayerCanSeePlayersChat( text, teamOnly, listener, speaker )
 	if !IsValid(speaker) then return false end
 	local canhear = self:PlayerCanHearChatVoice(listener, speaker, "chat") 
-	-- print( canhear, listener, speaker, listener:Alive())
 	return canhear
 end
 
