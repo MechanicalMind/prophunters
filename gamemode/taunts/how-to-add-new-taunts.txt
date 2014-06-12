@@ -1,4 +1,4 @@
-Create a file in 
+Create a file in (if the folder doesn't exist, create it)
 
 	lua/prophunters/taunts/ 
 
