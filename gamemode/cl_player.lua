@@ -17,3 +17,9 @@ net.Receive("heist_money", function (len)
 		end
 	end
 end)
+
+function GM:PlayerFootstep(ply, pos, foot, sound, volume, filter )
+	-- if ply:Team() == 3 then
+	-- 	return true
+	-- end
+end

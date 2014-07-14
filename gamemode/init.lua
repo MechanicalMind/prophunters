@@ -46,6 +46,7 @@ GM.VoiceHearTeam = CreateConVar("ph_voice_hearotherteam", 0, bit.bor(FCVAR_NOTIF
 GM.VoiceHearDead = CreateConVar("ph_voice_heardead", 1, bit.bor(FCVAR_NOTIFY), "Can we hear the voices of dead players and spectators" )
 GM.RoundLimit = CreateConVar("ph_roundlimit", 10, bit.bor(FCVAR_NOTIFY), "Number of rounds before mapvote" )
 GM.StartWaitTime = CreateConVar("ph_mapstartwait", 30, bit.bor(FCVAR_NOTIFY), "Number of seconds to wait for players on map start before starting round" )
+GM.HunterDamagePenalty = CreateConVar("ph_hunter_dmgpenalty", 3, bit.bor(FCVAR_NOTIFY), "Amount of damage a hunter should take for shooting an incorrect prop" )
 
 function GM:Initialize()
 	self.RoundWaitForPlayers = CurTime()
@@ -118,7 +119,7 @@ function GM:EntityTakeDamage( ent, dmginfo )
 
 				if bit.band(dmginfo:GetDamageType(), DMG_CRUSH) != DMG_CRUSH then					
 					local tdmg = DamageInfo()
-					tdmg:SetDamage(math.min(dmginfo:GetDamage(), 3))
+					tdmg:SetDamage(math.min(dmginfo:GetDamage(), math.max(self.HunterDamagePenalty:GetInt(), 1) ))
 					tdmg:SetDamageType(DMG_AIRBOAT)
 
 					-- tdmg:SetAttacker(ent)
