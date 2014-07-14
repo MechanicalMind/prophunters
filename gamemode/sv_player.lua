@@ -150,8 +150,12 @@ function GM:PlayerLoadout(ply)
 		ply:Give("weapon_smg1")
 		ply:Give("weapon_shotgun")
 
-		ply:GiveAmmo(45 * 4, "SMG1")
-		ply:GiveAmmo(6 * 4, "buckshot")
+		ply:GiveAmmo(45 * 10, "SMG1")
+		ply:GiveAmmo(6 * 10, "buckshot")
+		local amo = self.HunterGrenadeAmount:GetInt()
+		if amo > 0 then
+			ply:GiveAmmo(amo, "SMG1_Grenade")
+		end
 	end
 end
 
