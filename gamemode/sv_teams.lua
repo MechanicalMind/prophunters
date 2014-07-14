@@ -27,7 +27,9 @@ concommand.Add("car_jointeam", function (ply, com, args)
 
 	elseif newteam >= 2 && newteam <= 3 && newteam != curteam then
 
-		if team.NumPlayers(newteam) < team.NumPlayers(curteam) then
+		// make sure we can't join the bigger team
+		local otherteam = newteam == 2 and 3 or 2
+		if team.NumPlayers(newteam) <= team.NumPlayers(otherteam) then
 			ply:SetTeam(newteam)
 			if ply:Alive() then
 				ply:Kill()

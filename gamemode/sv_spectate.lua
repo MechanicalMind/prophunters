@@ -9,6 +9,7 @@ function PlayerMeta:CSpectate(mode, spectatee)
 		self:SpectateEntity(spectatee)
 		self.Spectatee = spectatee
 	else
+		self:SpectateEntity(Entity(-1))
 		self.Spectatee = nil
 	end
 	self.SpectateMode = mode
@@ -78,7 +79,11 @@ function GM:SpectateNext(ply, direction)
 
 		local ent = players[index]
 		if IsValid(ent) then
-			ply:CSpectate(OBS_MODE_CHASE, ent)
+			if ent:IsPlayer() && ent:Team() == 2 then
+				ply:CSpectate(OBS_MODE_IN_EYE, ent)
+			else
+				ply:CSpectate(OBS_MODE_CHASE, ent)
+			end
 		else
 			if IsValid(ply:GetRagdollEntity()) then
 				if ply:GetCSpectatee() != ply:GetRagdollEntity() then
@@ -103,20 +108,27 @@ function GM:ChooseSpectatee(ply)
 
 	if !ply.SpectateTime || ply.SpectateTime < CurTime() then
 
-		local direction 
-		if ply:KeyPressed(IN_ATTACK) || ply:KeyPressed(IN_JUMP) then
-			direction = 1
-		elseif ply:KeyPressed(IN_ATTACK2) || ply:KeyPressed(IN_DUCK) then
-			direction = -1
-		end
+		if ply:KeyPressed(IN_JUMP) then
+			if ply:GetCSpectateMode() != OBS_MODE_ROAMING && (ply:Team() == 1 || self.DeadSpectateRoam:GetBool()) then
+				ply:CSpectate(OBS_MODE_ROAMING)
+			end
+		else
 
-		if direction then
-			self:SpectateNext(ply, direction)
+			local direction 
+			if ply:KeyPressed(IN_ATTACK) then
+				direction = 1
+			elseif ply:KeyPressed(IN_ATTACK2) then
+				direction = -1
+			end
+
+			if direction then
+				self:SpectateNext(ply, direction)
+			end
 		end
 	end
 
 	// if invalid or dead
-	if !IsValid(ply:GetCSpectatee()) then
+	if !IsValid(ply:GetCSpectatee()) && ply:GetCSpectateMode() != OBS_MODE_ROAMING then
 		self:SpectateNext(ply)
 	end
 end
