@@ -36,6 +36,20 @@ function PlayerMeta:DisguiseAsProp(ent)
 		self.OldPlayerModel = self:GetModel()
 	end
 	self:Flashlight(false)
+
+
+	// create an entity for the disguise
+	// we can't use a clientside entity as it needs a shadow
+	local dent = self:GetNWEntity("disguiseEntity")
+	if !IsValid(dent) then
+		dent = ents.Create("ph_disguise")
+		self:SetNWEntity("disguiseEntity", dent)
+		dent.PropOwner = self
+		dent:SetPos(self:GetPos())
+		-- dent:SetParent(self)
+		dent:Spawn()
+	end
+	dent:SetModel(ent:GetModel())
 	
 	self:SetNWBool("disguised", true)
 	self:SetNWString("disguiseModel", ent:GetModel())
@@ -47,7 +61,7 @@ function PlayerMeta:DisguiseAsProp(ent)
 	self:SetRenderMode(RENDERMODE_TRANSALPHA)
 	self:SetModel(ent:GetModel())
 	self:SetNoDraw(false)
-	self:DrawShadow(false)
+	-- self:DrawShadow(false)
 	GAMEMODE:PlayerSetNewHull(self, hullxy, hullz, hullz)
 
 
@@ -86,6 +100,10 @@ function PlayerMeta:IsDisguised()
 end
 
 function PlayerMeta:UnDisguise()
+	local dent = self:GetNWEntity("disguiseEntity")
+	if IsValid(dent) then
+		dent:Remove()
+	end
 	self.PercentageHealth = nil
 	self:SetNWBool("disguised", false)
 	self:SetColor(Color(255, 255, 255, 255))

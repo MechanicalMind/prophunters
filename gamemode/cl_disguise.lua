@@ -11,16 +11,10 @@ local function renderDis(self)
 		if ply:Alive() && ply:IsDisguised() then
 			local model = ply:GetNWString("disguiseModel")
 			if model && model != "" then
-				if !IsValid(ply.PropMod) || ply.PropMod:GetModel() != model then
-					if IsValid(ply.PropMod) then
-						ply.PropMod:Remove()
-					end
-					ply.PropMod = ClientsideModel(model)
-					-- ply.PropMod:SetNoDraw(true)
-					ply.PropMod:DrawShadow(true)
-				end
 
-				if IsValid(ply.PropMod) then
+				local ent = ply:GetNWEntity("disguiseEntity")
+				if IsValid(ent) then
+					-- ent:SetNoDraw(false)
 					local mins = ply:GetNWVector("disguiseMins")
 					local maxs = ply:GetNWVector("disguiseMaxs")
 					local ang = ply:EyeAngles()
@@ -32,15 +26,18 @@ local function renderDis(self)
 					local center = (maxs + mins) / 2
 					center.z = 0
 					center:Rotate(ang)
-					ply.PropMod:SetPos(pos - center)
-					ply.PropMod:SetAngles(ang)
-					ply.PropMod:SetSkin(ply:GetNWInt("disguiseSkin", 1))
-					-- ply.PropMod:DrawModel()
+					ent:SetPos(pos - center)
+					ent:SetAngles(ang)
+					-- ent:SetupBones()
+					ent:SetSkin(ply:GetNWInt("disguiseSkin", 1))
+					-- ent:DrawShadow()
+					-- ent:DrawModel()
 				end
 			end
 		else
-			if IsValid(ply.PropMod) then
-				ply.PropMod:Remove()
+			local ent = ply:GetNWEntity("disguiseEntity")
+			if IsValid(ent) then
+				-- ent:SetNoDraw(true)
 			end
 		end
 	end
