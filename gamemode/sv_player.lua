@@ -430,7 +430,7 @@ end
 
 function GM:PlayerCanSeePlayersChat( text, teamOnly, listener, speaker )
 	if !IsValid(speaker) then return false end
-	local canhear = self:PlayerCanHearChatVoice(listener, speaker, "chat") 
+	local canhear = self:PlayerCanHearChatVoice(listener, speaker, "chat", teamOnly) 
 	return canhear
 end
 
@@ -451,7 +451,13 @@ function GM:PlayerCanHearPlayersVoice( listener, talker )
 end
 
 
-function GM:PlayerCanHearChatVoice( listener, talker, typ )
+function GM:PlayerCanHearChatVoice( listener, talker, typ, teamOnly )
+	if typ == "chat" && teamOnly then
+		if listener:Team() != talker:Team() then
+			return false
+		end
+	end
+	
 	if self:GetGameState() == 3 || self:GetGameState() == 0 then
 		return true
 	end
