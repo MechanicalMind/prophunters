@@ -457,6 +457,10 @@ function GM:PlayerCanHearChatVoice( listener, talker, typ, teamOnly )
 			return false
 		end
 	end
+
+	if sv_alltalk:GetBool() then
+		return true
+	end
 	
 	if self:GetGameState() == 3 || self:GetGameState() == 0 then
 		return true
