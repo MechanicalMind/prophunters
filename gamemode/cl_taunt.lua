@@ -136,10 +136,39 @@ local function openTauntMenu()
 		draw.ShadowText("make annoying fart sounds", "RobotoHUD-L15", 8 + tw + 16, 2 + th * 0.90, Color(220, 220, 220), 0, 4)
 	end
 
-	local clist = vgui.Create("DScrollPanel", menu)
+	local leftpnl = vgui.Create("DPanel", menu)
+	leftpnl:Dock(LEFT)
+	leftpnl:DockMargin(0, 0, 0, 0)
+	leftpnl:SetWide(menu:GetWide() * 0.3)
+	function leftpnl:Paint(w, h)
+	end
+
+	local but = vgui.Create("DButton", leftpnl)
+	but:Dock(BOTTOM)
+	but:DockMargin(0, 4, 4, 0)
+	but:SetTall(draw.GetFontHeight("RobotoHUD-15") * 1.3)
+	but:SetText("")
+	function but:Paint(w, h)
+		local col = Color(68, 68, 68, 160)
+		local colt = Color(190, 190, 190)
+		if self:IsDown() then
+			colMul(colt, 0.5)
+		elseif self:IsHovered() then
+			colMul(colt, 1.2)
+		end
+
+		draw.RoundedBoxEx(4, 0, 0, w, h, col, true, true, true, true)
+
+		draw.ShadowText("Random", "RobotoHUD-15", w / 2, h / 2, colt, 1, 1)
+	end
+	function but:DoClick()
+		RunConsoleCommand("ph_taunt_random")
+		menu:Close()
+	end
+
+	local clist = vgui.Create("DScrollPanel", leftpnl)
 	menu.CatList = clist
-	clist:Dock(LEFT)
-	clist:SetWide(menu:GetWide() * 0.3)
+	clist:Dock(FILL)
 	clist:DockMargin(0, 0, 0, 0)
 	local df = draw.GetFontHeight("RobotoHUD-15") * 1.6
 	function clist:Paint(w, h)
@@ -149,7 +178,6 @@ local function openTauntMenu()
 		-- draw.SimpleText("Categories", "RobotoHUD-15", w / 2, df / 2, color_white, 1, 1)
 	end
 
-	// child positioning
 	local canvas = clist:GetCanvas()
 	canvas:DockPadding(0, 0, 0, 0)
 	function canvas:OnChildAdded( child )

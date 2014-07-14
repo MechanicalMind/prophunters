@@ -31,7 +31,8 @@ local function addTaunt(name, snd, pteam, sex, cats, duration)
 
 	local dur, count = 0, 0
 	for k, v in pairs(snd) do
-		AllowedTauntSounds[v] = t
+		if !AllowedTauntSounds[v] then AllowedTauntSounds[v] = {} end
+		table.insert(AllowedTauntSounds[v], t)
 		dur = dur + SoundDuration(v)
 		count = count + 1
 
@@ -76,15 +77,19 @@ local function loadTaunts(rootFolder)
 		setfenv(f, tempG)
 		local b, err = pcall(f)
 
+		local s = SERVER and "Server" or "Client"
+		local b = SERVER and 90 or 0
 		if !b then
-			MsgC(Color(255, 50, 50), "Loading taunts failed " .. name .. ".lua\nError: " .. err .. "\n")
+			MsgC(Color(255, 50, 50 + b), s .. " loading taunts failed " .. name .. ".lua\nError: " .. err .. "\n")
+		else
+			MsgC(Color(50, 255, 50 + b), s .. " loaded taunts file " .. name .. ".lua\n")
 		end
 	end
 end
 
 function GM:LoadTaunts()
 	loadTaunts((GM or GAMEMODE).Folder:sub(11) .. "/gamemode/taunts/")
-	loadTaunts("lua/prophunters/taunts/")
+	loadTaunts("prophunters/taunts/")
 end
 
 GM:LoadTaunts()
