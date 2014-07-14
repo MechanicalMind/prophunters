@@ -13,7 +13,20 @@ end
 concommand.Add("car_jointeam", function (ply, com, args)
 	local curteam = ply:Team()
 	local newteam = tonumber(args[1] or "") or 0
-	if newteam >= 2 && newteam <= 3 && newteam != curteam then
+	if newteam == 1 && curteam != 1 then
+
+		ply:SetTeam(newteam)
+		if ply:Alive() then
+			ply:Kill()
+		end
+		local ct = ChatText()
+		ct:Add(ply:Nick())
+		ct:Add(" changed team to ")
+		ct:Add(team.GetName(newteam), team.GetColor(newteam))
+		ct:SendAll()
+
+	elseif newteam >= 2 && newteam <= 3 && newteam != curteam then
+
 		if team.NumPlayers(newteam) < team.NumPlayers(curteam) then
 			ply:SetTeam(newteam)
 			if ply:Alive() then
@@ -29,6 +42,7 @@ concommand.Add("car_jointeam", function (ply, com, args)
 			ct:Add("Team full, you cannot join")
 			ct:Send(ply)
 		end
+
 	end
 
 end)

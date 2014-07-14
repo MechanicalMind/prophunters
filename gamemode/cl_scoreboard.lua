@@ -12,6 +12,13 @@ surface.CreateFont( "ScoreboardPlayer" , {
 	italic = false
 })
 
+local function colMul(color, mul)
+	color.r = math.Clamp(math.Round(color.r * mul), 0, 255)
+	color.g = math.Clamp(math.Round(color.g * mul), 0, 255)
+	color.b = math.Clamp(math.Round(color.b * mul), 0, 255)
+end
+
+
 local muted = Material("icon32/muted.png", "noclamp")
 local skull = Material("melonbomber/skull.png", "noclamp")
 
@@ -252,17 +259,64 @@ function GM:ScoreboardShow()
 		end
 
 		local bottom = vgui.Create("DPanel", menu)
-		bottom:Dock(FILL)
+		bottom:SetTall(draw.GetFontHeight("RobotoHUD-15") * 1.3)
+		bottom:Dock(BOTTOM)
+		bottom:DockMargin(0, 8, 0, 0)
+
+		surface.SetFont("RobotoHUD-15")
+		local tw, th = surface.GetTextSize("Spectate")
+
 		function bottom:Paint(w, h)
+			local c
+			for k, ply in pairs(team.GetPlayers(1)) do
+				if c then
+					c = c .. ", " .. ply:Nick()
+				else
+					c = ply:Nick()
+				end
+			end
+			if c then
+				draw.ShadowText(c, "RobotoHUD-10", tw + 8 + 4, h / 2, color_white, 0, 1)
+			end
+		end
+
+		local but = vgui.Create("DButton", bottom)
+		but:Dock(LEFT)
+		but:SetText("")
+		but:DockMargin(0, 0, 4, 0)
+
+		but:SetWide(tw + 8)
+		function but:Paint(w, h)
+			local col = Color(90, 90, 90, 160)
+			local colt = Color(190, 190, 190)
+			if self:IsDown() then
+				colMul(colt, 0.5)
+			elseif self:IsHovered() then
+				colMul(colt, 1.2)
+			end
+
+			draw.RoundedBox(4, 0, 0, w, h, col)
+
+			draw.ShadowText("Spectate", "RobotoHUD-15", w / 2, h / 2, colt, 1, 1)
+		end
+		function but:DoClick()
+			RunConsoleCommand("car_jointeam", 1)
+		end
+
+		local main = vgui.Create("DPanel", menu)
+		main:Dock(FILL)
+		function main:Paint(w, h)
 			surface.SetDrawColor(40,40,40,230)
 			-- surface.DrawRect(0, 0, w, h)
 		end
 
-		menu.CopsList = makeTeamList(bottom, 2)
+		menu.CopsList = makeTeamList(main, 2)
 		menu.CopsList:Dock(LEFT)
 		menu.CopsList:DockMargin(0, 0, 8, 0)
-		menu.RobbersList = makeTeamList(bottom, 3)
+		menu.RobbersList = makeTeamList(main, 3)
 		menu.RobbersList:Dock(FILL)
+
+
 	end
 end
 function GM:ScoreboardHide()
