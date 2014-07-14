@@ -181,6 +181,13 @@ function GM:EndRound(reason)
 	local movePly, moveAmo
 	local tauntsPly, tauntsAmo = nil, 0
 	for k, ply in pairs(self:GetPlayingPlayers()) do
+
+		// TODO replace with better statistic tracker
+		ply.HunterKills = ply.HunterKills or 0
+		ply.PropDmgPenalty = ply.PropDmgPenalty or 0
+		ply.TauntAmount = ply.TauntAmount or 0
+		ply.PropMovement = ply.PropMovement or 0
+
 		if ply:Team() == 2 then // hunters
 
 			// get hunter with most prop damage

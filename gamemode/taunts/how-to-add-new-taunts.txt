@@ -33,7 +33,7 @@ examples
 		"npc/zombie/zombie_alert1.wav",
 		"npc/zombie/zombie_alert2.wav",
 		"npc/zombie/zombie_alert3.wav"
-	}, "props", "both", {"zombie"})
+	}, "props", "both", {"zombie", "growls"})
 
 	
 	addTaunt("Radio", {
