@@ -358,7 +358,7 @@ function GM:DoPlayerDeath(ply, attacker, dmginfo)
 			if attacker:Team() == 2 && ply:Team() == 3 then
 
 				// increase their round kills
-				attacker.HunterKills = attacker.HunterKills + 1
+				attacker.HunterKills = (attacker.HunterKills or 0) + 1
 
 				// set the first hunter kill award
 				if self.FirstHunterKill == nil then
