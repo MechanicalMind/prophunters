@@ -19,6 +19,7 @@ local function renderDis(self)
 					local maxs = ply:GetNWVector("disguiseMaxs")
 					local ang = ply:EyeAngles()
 					ang.p = 0
+					ang.r = 0
 					if ply:DisguiseRotationLocked() then
 						ang.y = ply:GetNWFloat("disguiseRotationLockYaw")
 					end
