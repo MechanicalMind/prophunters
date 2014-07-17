@@ -135,7 +135,7 @@ function GM:StartRound()
 
 	local c = 0
 	for k, ent in pairs(ents.GetAll()) do
-		if ent:IsDisguisableAs() then
+		if ent.IsDisguisableAs && ent:IsDisguisableAs() then
 			c = c + 1
 		end
 	end
