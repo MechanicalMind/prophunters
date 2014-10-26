@@ -54,11 +54,15 @@ function GM:HUDPaint()
 end
 
 local helpKeysProps = {
-	{"Left", "Disguise as prop"},
-	{"C", "Lock prop rotation"},
-	{"F3", "Taunt"}
+	{"attack", "Disguise as prop"},
+	{"menu_context", "Lock prop rotation"},
+	{"gm_showspare1", "Taunt"}
 }
 
+local function keyName(str)
+	str = input.LookupBinding(str)
+	return str:upper()
+end
 
 function GM:DrawGameHUD()
 	if LocalPlayer():Alive() then
@@ -120,13 +124,15 @@ function GM:DrawGameHUD()
 		local tw = 0
 		for k, t in pairs(help) do
 			surface.SetFont("RobotoHUD-15")
-			local w,h = surface.GetTextSize(t[1]:upper())
+			local name = keyName(t[1])
+			local w,h = surface.GetTextSize(name)
 			tw = math.max(tw, w)
 		end
 		for k, t in pairs(help) do
 			surface.SetFont("RobotoHUD-15")
-			local w,h = surface.GetTextSize(t[1]:upper())
-			draw.ShadowText(t[1]:upper(), "RobotoHUD-15", x + tw / 2, y + i * fh, color_white, 1, 0)
+			local name = keyName(t[1])
+			local w,h = surface.GetTextSize(name)
+			draw.ShadowText(name, "RobotoHUD-15", x + tw / 2, y + i * fh, color_white, 1, 0)
 			draw.ShadowText(t[2], "RobotoHUD-L15", x + tw + 10, y + i * fh, color_white, 0, 0)
 			i = i + 1
 		end
