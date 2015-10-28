@@ -102,6 +102,12 @@ function GM:CalcView(ply, pos, angles, fov)
 			trace.filter = tab
 
 			local tr = util.TraceLine(trace)
+			-- if (LocalPlayer() == Entity(1)) then
+			-- 	local a = 3
+			-- 	trace.mins = Vector(math.max(-a, mins.x), math.max(-a, mins.y), math.max(-a, mins.z))
+			-- 	trace.maxs = Vector(math.min(a, maxs.x), math.min(a, maxs.y), math.min(a, maxs.z))
+			-- 	tr = util.TraceHull(trace)
+			-- end
 			view.origin = trace.start + (trace.endpos - trace.start):GetNormal() * math.Clamp(trace.start:Distance(tr.HitPos) - 5, 0, reach)
 
 			view.angles = angles
