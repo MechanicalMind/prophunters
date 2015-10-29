@@ -173,6 +173,7 @@ function GM:EndRound(reason)
 		ct:SendAll()
 		winningTeam = 3
 	end
+	self.LastRoundResult = reason
 
 	self.PlayerAwards = {}
 
@@ -340,7 +341,9 @@ function GM:RoundsThink()
 			if self.RoundLimit:GetInt() > 0 && self.Rounds >= self.RoundLimit:GetInt() then
 				self:StartMapVote()
 			else
-				self:SwapTeams()
+				if self.LastRoundResult != 3 || !self.PropsWinStayProps:GetBool() then
+					self:SwapTeams()
+				end
 				self:SetupRound()
 			end
 		end
