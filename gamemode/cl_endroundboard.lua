@@ -516,6 +516,11 @@ function GM:EndRoundMapVote()
 			local path = "maps/thumb/" .. map .. ".png"
 			if file.Exists(path, "GAME") then
 				png = Material(path, "noclamp")
+			else
+				local path = "materials/maps/" .. map .. ".png"
+				if file.Exists(path, "GAME") then
+					png = Material(path, "noclamp")
+				end
 			end
 		end
 		local dname = map:gsub("^%a%a%a?_", ""):gsub("_?v[%d%.%-]+$", "")
