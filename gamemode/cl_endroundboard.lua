@@ -448,6 +448,10 @@ local awards = {
 	PropDamage = {
 		name = "Angriest Player",
 		desc = "Hunter who shot at props the most"
+	},
+	MostMovement = {
+		name = "Most Movement",
+		desc = "Prop who moved the most"
 	}
 }
 
