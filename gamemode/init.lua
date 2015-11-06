@@ -12,7 +12,6 @@ end
 
 
 include("shared.lua")
-include("sh_condef.lua")
 include("sv_ragdoll.lua")
 include("sv_chattext.lua")
 include("sv_playercolor.lua")
