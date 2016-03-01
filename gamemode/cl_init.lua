@@ -1,5 +1,4 @@
 include("shared.lua")
-include("sh_condef.lua")
 include("cl_fixplayercolor.lua")
 include("cl_ragdoll.lua")
 include("cl_chattext.lua")
@@ -80,6 +79,15 @@ function GM:OnReloaded()
 end
 
 
+
+local function lerp(from, to, step)
+	if from < to then
+		return math.min(from + step, to)	
+	end
+	return math.max(from - step, to)
+end
+
+local camDis, camHeight = 0,0 
 function GM:CalcView(ply, pos, angles, fov)
 	if self:IsCSpectating() && IsValid(self:GetCSpectatee()) then
 		ply = self:GetCSpectatee()
@@ -94,21 +102,26 @@ function GM:CalcView(ply, pos, angles, fov)
 			local view = {}
 
 			local reach = (maxs.z - mins.z)
+			if self:GetRoundSettings() && self:GetRoundSettings().PropsCamDistance then
+				reach = reach * self:GetRoundSettings().PropsCamDistance
+			end
 			local trace = {}
 			trace.start = ply:GetPropEyePos()
-			trace.endpos = trace.start + angles:Forward() * -(reach + 5)
+			trace.endpos = trace.start + angles:Forward() * -reach
 			local tab = ents.FindByClass("prop_ragdoll")
 			table.insert(tab, ply)
 			trace.filter = tab
 
-			local tr = util.TraceLine(trace)
-			-- if (LocalPlayer() == Entity(1)) then
-			-- 	local a = 3
-			-- 	trace.mins = Vector(math.max(-a, mins.x), math.max(-a, mins.y), math.max(-a, mins.z))
-			-- 	trace.maxs = Vector(math.min(a, maxs.x), math.min(a, maxs.y), math.min(a, maxs.z))
-			-- 	tr = util.TraceHull(trace)
-			-- end
-			view.origin = trace.start + (trace.endpos - trace.start):GetNormal() * math.Clamp(trace.start:Distance(tr.HitPos) - 5, 0, reach)
+			local a = 3
+			trace.mins = Vector(math.max(-a, mins.x), math.max(-a, mins.y), math.max(-a, mins.z))
+			trace.maxs = Vector(math.min(a, maxs.x), math.min(a, maxs.y), math.min(a, maxs.z))
+			tr = util.TraceHull(trace)
+			camDis = lerp(camDis, (tr.HitPos - trace.start):Length(), FrameTime() * 300)
+			camHeight = lerp(camHeight, (ply:GetPropEyePos() - ply:GetPos()).z, FrameTime() * 300)
+			local camPos = trace.start * 1
+			camPos.z = ply:GetPos().z + camHeight
+			view.origin = camPos + (trace.endpos - trace.start):GetNormal() * camDis
+			-- view.origin = tr.HitPos
 
 			view.angles = angles
 			view.fov = fov
