@@ -201,7 +201,7 @@ function GM:EndRound(reason)
 
 			// get hunter with most kills
 			if ply.HunterKills > killsAmo then
-				killsAmo = ply.PropDmgPenalty
+				killsAmo = ply.HunterKills
 				killsPly = ply
 			end
 		else
