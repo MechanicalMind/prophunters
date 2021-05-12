@@ -142,6 +142,7 @@ function GM:StartRound()
 
 	self.RoundSettings = {}
 	self.RoundSettings.RoundTime = math.Round((c * 0.5 / hunters + 60 * 4)  * math.sqrt(props / hunters))
+	self.RoundSettings.PropsCamDistance = self.PropsCamDistance:GetFloat()
 	print("Round time is " .. (self.RoundSettings.RoundTime / 60) .. " (" .. c .. " props)")
 
 	self:NetworkGameSettings()
@@ -173,12 +174,14 @@ function GM:EndRound(reason)
 		ct:SendAll()
 		winningTeam = 3
 	end
+	self.LastRoundResult = reason
 
 	self.PlayerAwards = {}
 
 	local propPly, propDmg = nil, 0
 	local killsPly, killsAmo = nil, 0
-	local movePly, moveAmo
+	local leastMovePly, leastMoveAmo
+	local mostMovePly, mostMoveAmo
 	local tauntsPly, tauntsAmo = nil, 0
 	for k, ply in pairs(self:GetPlayingPlayers()) do
 
@@ -198,15 +201,21 @@ function GM:EndRound(reason)
 
 			// get hunter with most kills
 			if ply.HunterKills > killsAmo then
-				killsAmo = ply.PropDmgPenalty
+				killsAmo = ply.HunterKills
 				killsPly = ply
 			end
 		else
 
 			// get prop with least movement
-			if moveAmo == nil || ply.PropMovement < moveAmo then
-				moveAmo = ply.PropMovement
-				movePly = ply
+			if leastMoveAmo == nil || ply.PropMovement < leastMoveAmo then
+				leastMoveAmo = ply.PropMovement
+				leastMovePly = ply
+			end
+			
+			// get prop with most movement
+			if mostMoveAmo == nil || ply.PropMovement > mostMoveAmo then
+				mostMoveAmo = ply.PropMovement
+				mostMovePly = ply
 			end
 
 			// get prop with most taunts
@@ -221,8 +230,12 @@ function GM:EndRound(reason)
 		self.PlayerAwards["PropDamage"] = propPly
 	end
 
-	if movePly then
-		self.PlayerAwards["LeastMovement"] = movePly
+	if leastMovePly then
+		self.PlayerAwards["LeastMovement"] = leastMovePly
+	end
+	
+	if mostMovePly then
+		self.PlayerAwards["MostMovement"] = mostMovePly
 	end
 	
 	if killsPly then
@@ -340,7 +353,9 @@ function GM:RoundsThink()
 			if self.RoundLimit:GetInt() > 0 && self.Rounds >= self.RoundLimit:GetInt() then
 				self:StartMapVote()
 			else
-				self:SwapTeams()
+				if self.LastRoundResult != 3 || !self.PropsWinStayProps:GetBool() then
+					self:SwapTeams()
+				end
 				self:SetupRound()
 			end
 		end

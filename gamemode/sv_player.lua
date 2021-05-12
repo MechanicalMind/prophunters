@@ -115,12 +115,14 @@ function PlayerMeta:CalculateSpeed()
 
 	// speed penalty for small objects (popcan, small bottles, mouse, etc)
 	if self:IsDisguised() then
-		local mul = math.Clamp(self:GetNWFloat("disguiseVolume", 1) / 200, 0.5, 1)
-		settings.walkSpeed = settings.walkSpeed * mul
+		if GAMEMODE.PropsSmallSize:GetFloat() > 0 then
+			local mul = math.Clamp(self:GetNWFloat("disguiseVolume", 1) / GAMEMODE.PropsSmallSize:GetFloat(), 0.5, 1)
+			settings.walkSpeed = settings.walkSpeed * mul
+		end
 		if settings.runSpeed > settings.walkSpeed then
 			settings.runSpeed = settings.walkSpeed
 		end
-		settings.jumpPower = settings.jumpPower * 1.2
+		settings.jumpPower = settings.jumpPower * GAMEMODE.PropsJumpPower:GetFloat()
 	end
 
 	hook.Call("PlayerCalculateSpeed", ply, settings)

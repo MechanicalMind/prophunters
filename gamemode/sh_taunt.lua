@@ -4,8 +4,10 @@ Taunts = {}
 TauntCategories = {}
 AllowedTauntSounds = {}
 
+// display name, table of sound files, team (name or id), sex (nil for both), table of category ids, [duration in seconds]
 local function addTaunt(name, snd, pteam, sex, cats, duration)
-	if type(snd) != "table" then snd = {snd} end
+	if !name || type(name) != "string" then return end
+	if type(snd) != "table" then snd = {tostring(snd)} end
 	if #snd == 0 then error("No sounds for " .. name) return end
 
 	local t = {}
@@ -23,7 +25,7 @@ local function addTaunt(name, snd, pteam, sex, cats, duration)
 	end
 	if sex && #sex > 0 then
 		t.sex = sex
-		if sex == "both" then
+		if sex == "both" || sex == "nil" then
 			t.sex = nil
 		end
 	end
@@ -49,9 +51,11 @@ local function addTaunt(name, snd, pteam, sex, cats, duration)
 	end
 
 	table.insert(Taunts, t)
-	for k, cat in pairs(cats) do
-		if !TauntCategories[cat] then TauntCategories[cat] = {} end
-		table.insert(TauntCategories[cat], t)
+	if cats then
+		for k, cat in pairs(cats) do
+			if !TauntCategories[cat] then TauntCategories[cat] = {} end
+			table.insert(TauntCategories[cat], t)
+		end
 	end
 end
 
@@ -65,7 +69,7 @@ meta.__newindex = _G
 setmetatable(tempG, meta)
 
 local function loadTaunts(rootFolder)
-	local files, dirs = file.Find(rootFolder .. "*", "LUA")
+	local files, dirs = file.Find(rootFolder .. "*.lua", "LUA")
 	for k, v in pairs(files) do
 		AddCSLuaFile(rootFolder .. v)
 
