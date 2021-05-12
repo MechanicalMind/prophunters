@@ -49,6 +49,9 @@ GM.StartWaitTime = CreateConVar("ph_mapstartwait", 30, bit.bor(FCVAR_NOTIFY), "N
 GM.HunterDamagePenalty = CreateConVar("ph_hunter_dmgpenalty", 3, bit.bor(FCVAR_NOTIFY), "Amount of damage a hunter should take for shooting an incorrect prop" )
 GM.HunterGrenadeAmount = CreateConVar("ph_hunter_smggrenades", 1, bit.bor(FCVAR_NOTIFY), "Amount of SMG grenades hunters should spawn with" )
 GM.DeadSpectateRoam = CreateConVar("ph_dead_canroam", 0, bit.bor(FCVAR_NOTIFY), "Can dead players use the roam spectate mode" )
+GM.LongTaunt = CreateConVar("ph_long_taunt", 10, bit.bor(FCVAR_NOTIFY), "Taunts lasting more than this number of seconds are considered long" )
+GM.AutoTauntMin = CreateConVar("ph_autotaunt_min", 30, bit.bor(FCVAR_NOTIFY, FCVAR_REPLICATED), "The minimum number of seconds between auto taunts" )
+GM.AutoTauntMax = CreateConVar("ph_autotaunt_max", 60, bit.bor(FCVAR_NOTIFY, FCVAR_REPLICATED), "The maximum number of seconds between auto taunts" )
 
 function GM:Initialize()
 	self.RoundWaitForPlayers = CurTime()

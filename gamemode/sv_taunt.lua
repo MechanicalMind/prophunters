@@ -68,7 +68,7 @@ concommand.Add("ph_taunt_random", function (ply, com, args, full)
 
 		if #args > 0 then
 			if args[1]:lower() == "short" then
-				if v.soundDuration > 10 then
+				if v.soundDuration > self.LongTaunt:GetInt() then
 					continue
 				end
 			end
