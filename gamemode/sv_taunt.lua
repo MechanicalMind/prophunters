@@ -66,6 +66,14 @@ concommand.Add("ph_taunt_random", function (ply, com, args, full)
 			continue
 		end
 
+		if #args > 0 then
+			if args[1]:lower() == "short" then
+				if v.soundDuration > 10 then
+					continue
+				end
+			end
+		end
+
 		table.insert(potential, v)
 	end
 
