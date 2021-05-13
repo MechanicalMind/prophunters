@@ -11,7 +11,7 @@ timer.Create( "autotaunt", 1, 0, function()
 			timeElapsed = 0
 		else
 			if timeElapsed > time then
-				RunConsoleCommand("ph_taunt_random short") 
+				RunConsoleCommand("ph_taunt_random", "short") 
 				time = math.random(minTime:GetInt(), maxTime:GetInt())
 				timeElapsed = 0
 			end
