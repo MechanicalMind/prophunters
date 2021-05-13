@@ -5,7 +5,7 @@ local maxTime = CreateClientConVar("ph_autotaunt_max", 60)
 local time = math.random(minTime:GetInt(), maxTime:GetInt())
 local timeElapsed = 0
 
-timer.Create( "autotaunt", 1, 0, function()
+timer.Create( "autotaunt", 0.5, 0, function()
 	if LocalPlayer():Team() == 3 && autoTauntEnabled:GetBool() then
 		if LocalPlayer().Taunting then
 			timeElapsed = 0
@@ -16,6 +16,6 @@ timer.Create( "autotaunt", 1, 0, function()
 				timeElapsed = 0
 			end
 		end
-		timeElapsed = timeElapsed + 1
+		timeElapsed = timeElapsed + 0.5
 	end
 end )
