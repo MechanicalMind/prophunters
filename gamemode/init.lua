@@ -55,6 +55,7 @@ GM.LongTaunt = CreateConVar("ph_long_taunt", 10, bit.bor(FCVAR_NOTIFY), "Taunts 
 GM.AutoTauntEnabled = CreateConVar("ph_autotaunt_enabled", 1, bit.bor(FCVAR_NOTIFY, FCVAR_REPLICATED), "Is auto-taunt enabled" )
 GM.AutoTauntMin = CreateConVar("ph_autotaunt_min", 30, bit.bor(FCVAR_NOTIFY, FCVAR_REPLICATED), "The minimum number of seconds between auto taunts" )
 GM.AutoTauntMax = CreateConVar("ph_autotaunt_max", 60, bit.bor(FCVAR_NOTIFY, FCVAR_REPLICATED), "The maximum number of seconds between auto taunts" )
+GM.TauntOverlap = CreateConVar("ph_taunt_overlap", 0, bit.bor(FCVAR_NOTIFY), "Can a player make overlapping taunts" )
 
 function GM:Initialize()
 	self.RoundWaitForPlayers = CurTime()
