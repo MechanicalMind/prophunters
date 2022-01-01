@@ -6,7 +6,7 @@ local time = math.random(minTime:GetInt(), maxTime:GetInt())
 local timeElapsed = 0
 
 timer.Create( "autotaunt", 0.5, 0, function()
-	if LocalPlayer():Team() == 3 && autoTauntEnabled:GetBool() then
+	if IsValid(LocalPlayer()) && LocalPlayer():Team() == 3 && autoTauntEnabled:GetBool() then
 		if LocalPlayer().Taunting then
 			timeElapsed = 0
 		else
