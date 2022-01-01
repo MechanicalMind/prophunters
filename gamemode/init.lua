@@ -51,6 +51,11 @@ GM.PropsWinStayProps = CreateConVar("ph_props_onwinstayprops", 0, bit.bor(FCVAR_
 GM.PropsSmallSize = CreateConVar("ph_props_small_size", 200, bit.bor(FCVAR_NOTIFY), "Size that speed penalty for small size starts to apply (0 to disable)" )
 GM.PropsJumpPower = CreateConVar("ph_props_jumppower", 1.2, bit.bor(FCVAR_NOTIFY), "Jump power bonus for when props are disguised" )
 GM.PropsCamDistance = CreateConVar("ph_props_camdistance", 1, bit.bor(FCVAR_NOTIFY), "The camera distance multiplier for props when disguised")
+GM.LongTaunt = CreateConVar("ph_long_taunt", 10, bit.bor(FCVAR_NOTIFY), "Taunts lasting more than this number of seconds are considered long" )
+GM.AutoTauntEnabled = CreateConVar("ph_autotaunt_enabled", 1, bit.bor(FCVAR_NOTIFY, FCVAR_REPLICATED), "Is auto-taunt enabled" )
+GM.AutoTauntMin = CreateConVar("ph_autotaunt_min", 30, bit.bor(FCVAR_NOTIFY, FCVAR_REPLICATED), "The minimum number of seconds between auto taunts" )
+GM.AutoTauntMax = CreateConVar("ph_autotaunt_max", 60, bit.bor(FCVAR_NOTIFY, FCVAR_REPLICATED), "The maximum number of seconds between auto taunts" )
+GM.TauntOverlap = CreateConVar("ph_taunt_overlap", 0, bit.bor(FCVAR_NOTIFY), "Can a player make overlapping taunts" )
 
 function GM:Initialize()
 	self.RoundWaitForPlayers = CurTime()

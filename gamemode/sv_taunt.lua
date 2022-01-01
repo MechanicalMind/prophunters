@@ -9,7 +9,7 @@ concommand.Add("ph_taunt", function (ply, com, args, full)
 
 	if !ply:Alive() then return end
 
-	if ply.Taunting && ply.Taunting > CurTime() then
+	if ply.Taunting && ply.Taunting > CurTime() && !GAMEMODE.TauntOverlap:GetBool() then
 		return
 	end
 
@@ -40,6 +40,7 @@ concommand.Add("ph_taunt", function (ply, com, args, full)
 		duration = t.soundDurationOverride or 1
 	end
 
+	autoTauntReset(duration, ply)
 	ply:EmitSound(snd)
 	ply.Taunting = CurTime() + duration + 0.1
 	ply.TauntAmount = (ply.TauntAmount or 0) + 1
@@ -52,7 +53,7 @@ concommand.Add("ph_taunt_random", function (ply, com, args, full)
 
 	if !ply:Alive() then return end
 
-	if ply.Taunting && ply.Taunting > CurTime() then
+	if ply.Taunting && ply.Taunting > CurTime() && !GAMEMODE.TauntOverlap:GetBool() then
 		return
 	end
 
@@ -64,6 +65,14 @@ concommand.Add("ph_taunt_random", function (ply, com, args, full)
 
 		if v.team && v.team != ply:Team() then
 			continue
+		end
+
+		if #args > 0 then
+			if args[1]:lower() == "short" then
+				if v.soundDuration > GAMEMODE.LongTaunt:GetInt() then
+					continue
+				end
+			end
 		end
 
 		table.insert(potential, v)
@@ -81,7 +90,16 @@ concommand.Add("ph_taunt_random", function (ply, com, args, full)
 		duration = t.soundDurationOverride or 1
 	end
 
+	autoTauntReset(duration, ply)
 	ply:EmitSound(snd)
 	ply.Taunting = CurTime() + duration + 0.1
 	ply.TauntAmount = (ply.TauntAmount or 0) + 1
 end)
+
+function autoTauntReset(duration, ply)
+	local rp = RecipientFilter();
+	rp:AddPlayer( ply );
+	umsg.Start( "autoTauntReset", rp );
+	umsg.String( duration );
+	umsg.End();
+ end
