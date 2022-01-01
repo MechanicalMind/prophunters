@@ -40,6 +40,7 @@ concommand.Add("ph_taunt", function (ply, com, args, full)
 		duration = t.soundDurationOverride or 1
 	end
 
+	autoTauntReset(duration)
 	ply:EmitSound(snd)
 	ply.Taunting = CurTime() + duration + 0.1
 	ply.TauntAmount = (ply.TauntAmount or 0) + 1
@@ -89,7 +90,14 @@ concommand.Add("ph_taunt_random", function (ply, com, args, full)
 		duration = t.soundDurationOverride or 1
 	end
 
+	autoTauntReset(duration)
 	ply:EmitSound(snd)
 	ply.Taunting = CurTime() + duration + 0.1
 	ply.TauntAmount = (ply.TauntAmount or 0) + 1
 end)
+
+function autoTauntReset(duration)
+	umsg.Start( "autoTauntReset" );
+	umsg.String( duration );
+	umsg.End();
+ end
