@@ -1,1 +1,1 @@
-..\..\..\bin\gmpublish.exe update -addon prophunters.gma -id 260275546
+..\..\..\bin\gmpublish.exe update -addon packed.gma -id 260275546
